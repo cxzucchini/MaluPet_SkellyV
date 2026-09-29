@@ -1,1067 +1,286 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PawFolio | Complete Canine Health Passport</title>
-    
-    <!-- Tailwind CSS CDN -->
+    <meta name="viewport" content="width=1440, height=800, initial-scale=1.0">
+    <title>Pawfolio - Vaccination Records</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Plus Jakarta Sans for exact typographic match -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&display=swap" rel="stylesheet">
+    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        coral: {
-                            50: '#FDF6F4',
-                            100: '#FBF0EB',
-                            200: '#F5D8CC',
-                            500: '#E87A5D', // Warm primary coral
-                            600: '#D96547',
-                            700: '#B84E33',
-                        },
-                        cream: '#FAF7F2',
-                        navy: {
-                            800: '#2C3E50',
-                            900: '#1E2B37',
-                        },
-                        sage: '#6B8E23',
-                    },
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        paw: {
+                            coral: '#E07A5F',
+                            coralDark: '#D1674B',
+                            bg: '#F9F6F0',
+                            sidebar: '#FFFFFF',
+                            border: '#EBE7DF',
+                            textPrimary: '#232B38',
+                            textMuted: '#858E9A',
+                            textDarkMuted: '#58616D',
+                            cardBorder: '#E6E1D8'
+                        }
                     }
                 }
             }
         }
     </script>
-    
-    <!-- FontAwesome & Google Fonts -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
     <style>
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #FAF7F2;
-            color: #2C3E50;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #EAE5DD;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        /* Rigid 1440x800 container for exact Figma HTML import */
+        .figma-frame {
+            width: 1440px;
+            height: 800px;
+            min-width: 1440px;
+            min-height: 800px;
+            max-width: 1440px;
+            max-height: 800px;
+            overflow: hidden;
+            background-color: #F9F6F0;
+            position: relative;
         }
 
-        /* Glassmorphism backdrop */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(245, 216, 204, 0.6);
-        }
-
-        /* Active Nav Link Marker */
-        .nav-link-active {
-            background-color: #FBF0EB !important;
-            color: #E87A5D !important;
-            border-right: 3px solid #E87A5D;
-            font-weight: 800;
-        }
-
-        /* Active Filter Tab */
-        .tab-btn-active {
-            background-color: #E87A5D !important;
-            color: #FFFFFF !important;
-            box-shadow: 0 4px 14px rgba(232, 122, 93, 0.28);
-        }
-
-        /* Scrollbar Styling */
+        /* Custom subtle scrollbars if needed */
         ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #FAF7F2;
+            width: 5px;
         }
         ::-webkit-scrollbar-thumb {
-            background: #F5D8CC;
-            border-radius: 9999px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #E87A5D;
-        }
-
-        /* Soft Pulse for Overdue Alerts */
-        @keyframes softPulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.85; transform: scale(1.03); }
-        }
-        .urgent-pulse {
-            animation: softPulse 2.2s infinite ease-in-out;
-        }
-
-        /* Print styles for Emergency Passport Card */
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            #printableEmergencyPassport, #printableEmergencyPassport * {
-                visibility: visible;
-            }
-            #printableEmergencyPassport {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-            }
+            background: #D5CFC5;
+            border-radius: 10px;
         }
     </style>
 </head>
-<body class="h-full flex flex-col md:flex-row overflow-x-hidden selection:bg-coral-500 selection:text-white">
+<body>
 
-    <!-- DESKTOP SIDEBAR NAVIGATION -->
-    <aside class="hidden lg:flex flex-col w-64 bg-white border-r border-coral-200/80 p-5 justify-between flex-shrink-0 z-30 h-screen sticky top-0">
-        <div class="space-y-6">
-            <!-- Brand Header -->
-            <a href="javascript:void(0)" onclick="switchView('hero')" class="flex items-center gap-3 px-2 group">
-                <div class="w-10 h-10 rounded-2xl bg-coral-500 flex items-center justify-center text-white shadow-md shadow-coral-500/20 group-hover:scale-105 transition-transform">
-                    <i class="fa-solid fa-dog text-xl"></i>
-                </div>
-                <div>
-                    <span class="text-xl font-black tracking-tight text-navy-800">paw<span class="text-coral-500">folio</span></span>
-                    <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider">Canine Passport</span>
-                </div>
-            </a>
-
-            <!-- Active Dog Selector Pill -->
-            <div class="bg-coral-50 p-3 rounded-2xl border border-coral-200/80 space-y-1">
-                <span class="text-[10px] font-extrabold uppercase text-coral-700 tracking-wider block">Active Dog Profile</span>
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-paw text-coral-500 text-xs"></i>
-                    <select id="sidebarDogSwitcher" onchange="switchActiveDog(this.value)" class="bg-transparent text-xs font-black text-navy-800 focus:outline-none cursor-pointer w-full">
-                        <option value="buster">Buster (Golden Retriever)</option>
-                        <option value="luna">Luna (French Bulldog)</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Navigation Links -->
-            <nav class="space-y-1 text-xs font-bold text-gray-600">
-                <button onclick="switchView('hero')" id="nav-hero" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-coral-50 hover:text-coral-500 transition-all">
-                    <i class="fa-solid fa-house text-coral-500 w-4 text-center"></i> Home Landing
-                </button>
-                <button onclick="switchView('dashboard')" id="nav-dashboard" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-coral-50 hover:text-coral-500 transition-all nav-link-active">
-                    <i class="fa-solid fa-chart-pie text-coral-500 w-4 text-center"></i> Dashboard
-                </button>
-                <button onclick="switchView('profile')" id="nav-profile" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-coral-50 hover:text-coral-500 transition-all">
-                    <i class="fa-solid fa-id-card text-coral-500 w-4 text-center"></i> Dog Profile
-                </button>
-                <button onclick="switchView('vaccines')" id="nav-vaccines" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-coral-50 hover:text-coral-500 transition-all">
-                    <i class="fa-solid fa-syringe text-coral-500 w-4 text-center"></i> Vaccinations
-                </button>
-                <button onclick="switchView('schedules')" id="nav-schedules" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-coral-50 hover:text-coral-500 transition-all">
-                    <i class="fa-solid fa-calendar-check text-coral-500 w-4 text-center"></i> Schedules & Feeding
-                </button>
-                <button onclick="switchView('medical')" id="nav-medical" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-coral-50 hover:text-coral-500 transition-all">
-                    <i class="fa-solid fa-file-medical text-coral-500 w-4 text-center"></i> Medical History
-                </button>
-                <button onclick="switchView('vault')" id="nav-vault" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-coral-50 hover:text-coral-500 transition-all">
-                    <i class="fa-solid fa-shield-cat text-coral-500 w-4 text-center"></i> Emergency Vault
-                </button>
-                
-                <div class="pt-4 border-t border-gray-100 space-y-1">
-                    <span class="px-3 text-[10px] font-extrabold uppercase text-gray-400 tracking-wider block mb-1">Info & Support</span>
-                    <button onclick="switchView('about')" id="nav-about" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-coral-50 hover:text-coral-500 transition-all">
-                        <i class="fa-solid fa-circle-info text-gray-400 w-4 text-center"></i> About Us
-                    </button>
-                    <button onclick="switchView('services')" id="nav-services" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-coral-50 hover:text-coral-500 transition-all">
-                        <i class="fa-solid fa-stethoscope text-gray-400 w-4 text-center"></i> Our Services
-                    </button>
-                    <button onclick="switchView('contact')" id="nav-contact" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-coral-50 hover:text-coral-500 transition-all">
-                        <i class="fa-solid fa-envelope text-gray-400 w-4 text-center"></i> Contact Us
-                    </button>
-                    <button onclick="switchView('help')" id="nav-help" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-coral-50 hover:text-coral-500 transition-all">
-                        <i class="fa-solid fa-circle-question text-gray-400 w-4 text-center"></i> Help / FAQs
-                    </button>
-                </div>
-            </nav>
-        </div>
-
-        <!-- User Profile Card in Sidebar -->
-        <div class="bg-cream p-3 rounded-2xl border border-coral-200/60 flex items-center justify-between">
-            <div class="flex items-center gap-2.5">
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Dog Parent" class="w-8 h-8 rounded-full object-cover border border-coral-500">
-                <div class="leading-tight">
-                    <span class="block text-xs font-extrabold text-navy-800">Jane Doe</span>
-                    <span class="block text-[10px] text-gray-500">Verified Parent</span>
-                </div>
-            </div>
-            <button onclick="openModal('authModal')" title="Login / Switch Account" class="text-coral-500 hover:text-coral-600 p-1">
-                <i class="fa-solid fa-arrow-right-to-bracket text-xs"></i>
-            </button>
-        </div>
-    </aside>
-
-    <!-- MAIN APPLICATION WRAPPER -->
-    <div class="flex-grow flex flex-col min-w-0 min-h-screen">
+    <div class="figma-frame flex flex-row select-none">
         
-        <!-- MOBILE TOP BAR -->
-        <header class="lg:hidden sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-coral-200 px-4 py-3 flex items-center justify-between">
-            <a href="javascript:void(0)" onclick="switchView('hero')" class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-xl bg-coral-500 flex items-center justify-center text-white font-bold">
-                    <i class="fa-solid fa-dog text-sm"></i>
+        <!-- SIDEBAR (Fixed 275px width matching design) -->
+        <aside class="w-[275px] h-full bg-white border-r border-[#EAE5DD] flex flex-col justify-between px-5 py-6 shrink-0 z-10">
+            <div>
+                <div class="flex items-center gap-3 mb-6 px-1">
+                    <div class="w-10 h-10 rounded-2xl bg-[#E07A5F] flex items-center justify-center text-white text-xl shadow-sm shrink-0">
+                        <i class="fa-solid fa-paw"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <h1 class="font-black text-[22px] leading-tight text-[#222A35] tracking-tight">pawfolio</h1>
+                        <span class="text-[9px] font-extrabold text-[#9FA6B0] tracking-[0.15em] uppercase -mt-0.5">CANINE PASSPORT</span>
+                    </div>
                 </div>
-                <span class="text-lg font-black text-navy-800">paw<span class="text-coral-500">folio</span></span>
-            </a>
 
-            <div class="flex items-center gap-2">
-                <select onchange="switchActiveDog(this.value)" class="bg-coral-50 border border-coral-200 text-xs font-extrabold text-navy-800 py-1 px-2 rounded-xl">
-                    <option value="buster">Buster</option>
-                    <option value="luna">Luna</option>
-                </select>
-                <button onclick="toggleMobileDrawer()" class="p-2 text-navy-800 bg-cream border border-coral-200 rounded-xl">
-                    <i class="fa-solid fa-bars text-sm"></i>
+                <div class="bg-[#FAF3EE] rounded-2xl p-3 mb-6 border border-[#F3E5DC]">
+                    <span class="text-[9px] font-extrabold text-[#E07A5F] tracking-widest uppercase block mb-1">ACTIVE DOG PROFILE</span>
+                    <div class="flex items-center justify-between cursor-pointer">
+                        <div class="flex items-center gap-2 overflow-hidden">
+                            <i class="fa-solid fa-paw text-[#E07A5F] text-xs shrink-0"></i>
+                            <span class="font-bold text-[12.5px] text-[#222A35] truncate">Buster (Golden Retriever)</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-[10px] text-[#222A35] ml-1 shrink-0"></i>
+                    </div>
+                </div>
+
+                <nav class="space-y-1">
+                    <a href="#" class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-xs font-bold text-[#555E6B] hover:bg-[#F9F6F0] transition">
+                        <i class="fa-solid fa-house text-sm w-4 text-center text-[#88909A]"></i>
+                        <span>Home Landing</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-xs font-bold text-[#555E6B] hover:bg-[#F9F6F0] transition">
+                        <i class="fa-solid fa-gauge-high text-sm w-4 text-center text-[#88909A]"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-xs font-bold text-[#555E6B] hover:bg-[#F9F6F0] transition">
+                        <i class="fa-regular fa-id-card text-sm w-4 text-center text-[#88909A]"></i>
+                        <span>Dog Profile</span>
+                    </a>
+                    
+                    <!-- ACTIVE STATE: Vaccinations tab with border and coral tint -->
+                    <a href="#" class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-xs font-extrabold text-[#E07A5F] bg-[#FAF0E9] border border-[#222A35] shadow-xs">
+                        <i class="fa-solid fa-syringe text-sm w-4 text-center text-[#E07A5F]"></i>
+                        <span>Vaccinations</span>
+                    </a>
+
+                    <a href="#" class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-xs font-bold text-[#555E6B] hover:bg-[#F9F6F0] transition">
+                        <i class="fa-regular fa-calendar-check text-sm w-4 text-center text-[#88909A]"></i>
+                        <span>Schedules & Feeding</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-xs font-bold text-[#555E6B] hover:bg-[#F9F6F0] transition">
+                        <i class="fa-solid fa-notes-medical text-sm w-4 text-center text-[#88909A]"></i>
+                        <span>Medical History</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-xs font-bold text-[#555E6B] hover:bg-[#F9F6F0] transition">
+                        <i class="fa-solid fa-shield-halved text-sm w-4 text-center text-[#88909A]"></i>
+                        <span>Emergency Vault</span>
+                    </a>
+                </nav>
+
+                <!-- Info & Support Group -->
+                <div class="mt-6 pt-5 border-t border-[#EAE5DD]">
+                    <span class="text-[9px] font-extrabold text-[#A1A8B2] tracking-widest uppercase px-3.5 mb-2 block">INFO & SUPPORT</span>
+                    <nav class="space-y-1">
+                        <a href="#" class="flex items-center gap-3.5 px-3.5 py-2 rounded-xl text-xs font-bold text-[#555E6B] hover:bg-[#F9F6F0] transition">
+                            <i class="fa-solid fa-circle-info text-xs w-4 text-center text-[#88909A]"></i>
+                            <span>About Us</span>
+                        </a>
+                        <a href="#" class="flex items-center gap-3.5 px-3.5 py-2 rounded-xl text-xs font-bold text-[#555E6B] hover:bg-[#F9F6F0] transition">
+                            <i class="fa-solid fa-user-doctor text-xs w-4 text-center text-[#88909A]"></i>
+                            <span>Our Services</span>
+                        </a>
+                        <a href="#" class="flex items-center gap-3.5 px-3.5 py-2 rounded-xl text-xs font-bold text-[#555E6B] hover:bg-[#F9F6F0] transition">
+                            <i class="fa-regular fa-envelope text-xs w-4 text-center text-[#88909A]"></i>
+                            <span>Contact Us</span>
+                        </a>
+                        <a href="#" class="flex items-center gap-3.5 px-3.5 py-2 rounded-xl text-xs font-bold text-[#555E6B] hover:bg-[#F9F6F0] transition">
+                            <i class="fa-regular fa-circle-question text-xs w-4 text-center text-[#88909A]"></i>
+                            <span>Help / FAQs</span>
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <div class="bg-[#FAF3EE] rounded-2xl p-2.5 flex items-center justify-between border border-[#F3E5DC]">
+                <div class="flex items-center gap-2.5">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120" alt="Jane Doe Profile" class="w-8 h-8 rounded-full object-cover">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-extrabold text-[#222A35] leading-tight">Jane Doe</span>
+                        <span class="text-[10px] font-semibold text-[#88909A] leading-tight">Verified Parent</span>
+                    </div>
+                </div>
+                <button class="text-[#E07A5F] p-1.5 hover:opacity-80 transition">
+                    <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
                 </button>
             </div>
-        </header>
+        </aside>
 
-        <!-- MOBILE DRAWER MENU -->
-        <div id="mobileDrawer" class="lg:hidden fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm">
-            <div class="bg-white w-4/5 max-w-sm h-full p-6 space-y-4 overflow-y-auto">
-                <div class="flex justify-between items-center pb-3 border-b border-gray-100">
-                    <span class="font-extrabold text-navy-800 text-base">Navigation Menu</span>
-                    <button onclick="toggleMobileDrawer()" class="text-gray-400 hover:text-navy-800"><i class="fa-solid fa-xmark text-lg"></i></button>
+        <main class="flex-1 h-full px-12 py-9 flex flex-col overflow-y-auto">
+            
+            <!-- Header Bar -->
+            <div class="flex justify-between items-start mb-7">
+                <div>
+                    <span class="text-[11px] font-extrabold text-[#E07A5F] tracking-wider uppercase block mb-1">IMMUNIZATION PROTOCOL</span>
+                    <h1 class="text-[34px] font-black text-[#222A35] tracking-tight leading-none">Vaccination Records (Buster)</h1>
                 </div>
-                <nav class="space-y-2 text-xs font-bold text-gray-700">
-                    <button onclick="switchView('hero'); toggleMobileDrawer()" class="w-full text-left py-2 hover:text-coral-500 flex items-center gap-2.5"><i class="fa-solid fa-house text-coral-500"></i> Home Landing</button>
-                    <button onclick="switchView('dashboard'); toggleMobileDrawer()" class="w-full text-left py-2 hover:text-coral-500 flex items-center gap-2.5"><i class="fa-solid fa-chart-pie text-coral-500"></i> Dashboard</button>
-                    <button onclick="switchView('profile'); toggleMobileDrawer()" class="w-full text-left py-2 hover:text-coral-500 flex items-center gap-2.5"><i class="fa-solid fa-id-card text-coral-500"></i> Dog Profile</button>
-                    <button onclick="switchView('vaccines'); toggleMobileDrawer()" class="w-full text-left py-2 hover:text-coral-500 flex items-center gap-2.5"><i class="fa-solid fa-syringe text-coral-500"></i> Vaccination Records</button>
-                    <button onclick="switchView('schedules'); toggleMobileDrawer()" class="w-full text-left py-2 hover:text-coral-500 flex items-center gap-2.5"><i class="fa-solid fa-calendar-check text-coral-500"></i> Daily Schedules</button>
-                    <button onclick="switchView('medical'); toggleMobileDrawer()" class="w-full text-left py-2 hover:text-coral-500 flex items-center gap-2.5"><i class="fa-solid fa-file-medical text-coral-500"></i> Medical History</button>
-                    <button onclick="switchView('vault'); toggleMobileDrawer()" class="w-full text-left py-2 hover:text-coral-500 flex items-center gap-2.5"><i class="fa-solid fa-shield-cat text-coral-500"></i> Emergency Vault</button>
-                    <button onclick="switchView('about'); toggleMobileDrawer()" class="w-full text-left py-2 hover:text-coral-500 flex items-center gap-2.5"><i class="fa-solid fa-circle-info text-gray-400"></i> About Us</button>
-                    <button onclick="switchView('services'); toggleMobileDrawer()" class="w-full text-left py-2 hover:text-coral-500 flex items-center gap-2.5"><i class="fa-solid fa-stethoscope text-gray-400"></i> Our Services</button>
-                    <button onclick="switchView('contact'); toggleMobileDrawer()" class="w-full text-left py-2 hover:text-coral-500 flex items-center gap-2.5"><i class="fa-solid fa-envelope text-gray-400"></i> Contact Us</button>
-                    <button onclick="switchView('help'); toggleMobileDrawer()" class="w-full text-left py-2 hover:text-coral-500 flex items-center gap-2.5"><i class="fa-solid fa-circle-question text-gray-400"></i> Help & Support</button>
-                </nav>
+                
+                <!-- Primary Action Button -->
+                <button class="bg-[#E07A5F] hover:bg-[#D1674B] text-white font-bold text-xs px-5 py-3.5 rounded-2xl flex items-center gap-2 shadow-xs transition cursor-pointer">
+                    <i class="fa-solid fa-plus text-xs"></i>
+                    <span>Add Vaccination Record</span>
+                </button>
             </div>
-        </div>
 
-        <!-- MAIN DYNAMIC CONTENT CONTAINER -->
-        <main class="flex-grow p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-8">
+            <div class="flex items-center gap-3 mb-8">
+                <!-- Active Pill -->
+                <button class="bg-[#E07A5F] text-white font-bold text-xs px-5 py-2.5 rounded-full shadow-xs">
+                    All (4)
+                </button>
+                <!-- Inactive Pills -->
+                <button class="bg-white hover:bg-gray-50 text-[#555E6B] font-bold text-xs px-5 py-2.5 rounded-full border border-[#EAE5DD] transition">
+                    Completed (2)
+                </button>
+                <button class="bg-white hover:bg-gray-50 text-[#555E6B] font-bold text-xs px-5 py-2.5 rounded-full border border-[#EAE5DD] transition">
+                    Up Coming (1)
+                </button>
+                <button class="bg-white hover:bg-gray-50 text-[#555E6B] font-bold text-xs px-5 py-2.5 rounded-full border border-[#EAE5DD] transition">
+                    Overdue (1)
+                </button>
+            </div>
 
-            <!-- 1. LANDING HERO VIEW -->
-            <section id="view-hero" class="app-view hidden space-y-10">
-                <div class="glass-card rounded-3xl p-8 sm:p-12 border border-coral-200 shadow-sm flex flex-col md:flex-row items-center gap-8">
-                    <div class="space-y-4 md:w-1/2">
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-coral-100 text-coral-700 text-xs font-black uppercase tracking-wider">
-                            <i class="fa-solid fa-shield-dog"></i> Dedicated Canine Care
-                        </span>
-                        <h1 class="text-3xl sm:text-5xl font-black text-navy-800 leading-tight">
-                            Keep your dog’s <span class="text-coral-500 italic">health</span> in one place.
-                        </h1>
-                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                            Track Rabies boosters, feeding timetables, veterinary records, and critical emergency microchip info — designed exclusively for dogs.
-                        </p>
-                        <div class="flex flex-wrap gap-3 pt-2">
-                            <button onclick="openModal('authModal')" class="px-6 py-3 bg-coral-500 hover:bg-coral-600 text-white rounded-2xl text-xs font-black shadow-lg shadow-coral-500/25 transition-all">
-                                Get Started Free
-                            </button>
-                            <button onclick="switchView('dashboard')" class="px-6 py-3 bg-coral-50 hover:bg-coral-100 text-coral-700 rounded-2xl text-xs font-black border border-coral-200 transition-all">
-                                Explore Dashboard
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="md:w-1/2 relative flex justify-center">
-                        <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=700&q=80" alt="Happy Dog" class="rounded-3xl object-cover w-full h-72 sm:h-80 shadow-xl border-4 border-white" onerror="this.src='https://placehold.co/600x400/E87A5D/ffffff?text=PawFolio+Dog'">
-                    </div>
-                </div>
-
-                <!-- Feature Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-3xl border border-coral-200 shadow-sm space-y-2">
-                        <div class="w-10 h-10 rounded-2xl bg-coral-100 text-coral-500 flex items-center justify-center text-lg font-bold">
-                            <i class="fa-solid fa-syringe"></i>
-                        </div>
-                        <h3 class="font-extrabold text-navy-800 text-sm">Vaccination Passport</h3>
-                        <p class="text-xs text-gray-500">Track Rabies, DHPP, and Bordetella boosters with automated due alerts.</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-3xl border border-coral-200 shadow-sm space-y-2">
-                        <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-lg font-bold">
-                            <i class="fa-solid fa-bowl-food"></i>
-                        </div>
-                        <h3 class="font-extrabold text-navy-800 text-sm">Feeding Schedules</h3>
-                        <p class="text-xs text-gray-500">Check off daily morning/evening kibble portions and dietary supplements.</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-3xl border border-coral-200 shadow-sm space-y-2">
-                        <div class="w-10 h-10 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center text-lg font-bold">
-                            <i class="fa-solid fa-vault"></i>
-                        </div>
-                        <h3 class="font-extrabold text-navy-800 text-sm">Emergency Vault</h3>
-                        <p class="text-xs text-gray-500">Printable health sheet with microchip IDs, blood type, and allergy flags.</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 2. OVERVIEW DASHBOARD VIEW -->
-            <section id="view-dashboard" class="app-view block space-y-8">
-                <!-- Welcome Banner -->
-                <div class="bg-white p-6 sm:p-8 rounded-3xl border border-coral-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                    <div>
-                        <span class="text-xs font-black text-coral-500 uppercase tracking-wider">Health Dashboard</span>
-                        <h1 class="text-2xl sm:text-3xl font-black text-navy-800">
-                            Welcome back, Jane! Here's <span id="dashDogName" class="text-coral-500">Buster's</span> Health Summary 🐕
-                        </h1>
-                        <p class="text-xs text-gray-500 mt-1">Real-time status updates across immunization, meals, and vet appointments.</p>
-                    </div>
-
-                    <div class="flex items-center gap-2">
-                        <button onclick="openModal('editDogModal')" class="px-4 py-2.5 bg-coral-50 hover:bg-coral-100 text-coral-700 text-xs font-bold rounded-xl border border-coral-200 transition-all">
-                            <i class="fa-solid fa-pen mr-1"></i> Edit Dog
-                        </button>
-                        <button onclick="openModal('addVaccineModal')" class="px-4 py-2.5 bg-coral-500 hover:bg-coral-600 text-white text-xs font-bold rounded-xl shadow-md transition-all">
-                            <i class="fa-solid fa-plus mr-1"></i> Add Vaccine
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Stats Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                    <div class="bg-white p-5 rounded-2xl border border-coral-100 shadow-sm flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl font-bold">
-                            <i class="fa-solid fa-syringe"></i>
+            <div class="space-y-4 max-w-[1080px]">
+                
+                <!-- Record Card 1: Completed DHPP -->
+                <div class="bg-[#EBF7F2] border border-[#BEE7D0] rounded-3xl p-5 flex items-center justify-between transition hover:shadow-xs">
+                    <div class="flex items-center gap-4">
+                        <div class="w-11 h-11 rounded-full bg-[#0EB078] flex items-center justify-center text-white shrink-0 shadow-xs">
+                            <i class="fa-solid fa-check text-lg"></i>
                         </div>
                         <div>
-                            <span class="text-xs text-gray-500 font-semibold block">Upcoming Vaccines</span>
-                            <span id="statUpcoming" class="text-2xl font-black text-navy-800">1 Due</span>
-                            <span class="text-[10px] text-amber-600 font-bold block mt-0.5"><i class="fa-solid fa-clock mr-1"></i> Due in 5 days</span>
+                            <h2 class="font-extrabold text-[15px] text-[#1B3227] leading-tight">DHPP Core Vaccine (Distemper / Parvovirus)</h2>
+                            <p class="text-xs font-semibold text-[#537664] mt-1">Administered: Oct 12, 2025 • Downtown Vet Hospital</p>
                         </div>
                     </div>
+                    <span class="bg-[#C8F2DD] text-[#0A6841] font-bold text-xs px-4 py-2 rounded-full tracking-wide">
+                        Completed
+                    </span>
+                </div>
 
-                    <div class="bg-white p-5 rounded-2xl border border-coral-100 shadow-sm flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center text-xl font-bold">
-                            <i class="fa-solid fa-triangle-exclamation"></i>
+                <!-- Record Card 2: Completed Lyme -->
+                <div class="bg-[#EBF7F2] border border-[#BEE7D0] rounded-3xl p-5 flex items-center justify-between transition hover:shadow-xs">
+                    <div class="flex items-center gap-4">
+                        <div class="w-11 h-11 rounded-full bg-[#0EB078] flex items-center justify-center text-white shrink-0 shadow-xs">
+                            <i class="fa-solid fa-check text-lg"></i>
                         </div>
                         <div>
-                            <span class="text-xs text-gray-500 font-semibold block">Overdue Vaccines</span>
-                            <span id="statOverdue" class="text-2xl font-black text-navy-800">1 Action</span>
-                            <span class="text-[10px] text-red-600 font-bold block mt-0.5 urgent-pulse"><i class="fa-solid fa-circle-exclamation mr-1"></i> Requires Vet Visit</span>
+                            <h2 class="font-extrabold text-[15px] text-[#1B3227] leading-tight">Lyme Disease Initial Booster</h2>
+                            <p class="text-xs font-semibold text-[#537664] mt-1">Administered: May 20, 2025 • City Animal Care</p>
                         </div>
                     </div>
+                    <span class="bg-[#C8F2DD] text-[#0A6841] font-bold text-xs px-4 py-2 rounded-full tracking-wide">
+                        Completed
+                    </span>
+                </div>
 
-                    <div class="bg-white p-5 rounded-2xl border border-coral-100 shadow-sm flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl font-bold">
-                            <i class="fa-solid fa-bowl-food"></i>
+                <!-- Record Card 3: Up Coming Rabies -->
+                <div class="bg-[#FFFDF0] border border-[#FEE7AA] rounded-3xl p-5 flex items-center justify-between transition hover:shadow-xs">
+                    <div class="flex items-center gap-4">
+                        <div class="w-11 h-11 rounded-full bg-[#E59800] flex items-center justify-center text-white shrink-0 shadow-xs">
+                            <i class="fa-solid fa-clock text-lg"></i>
                         </div>
                         <div>
-                            <span class="text-xs text-gray-500 font-semibold block">Daily Feeding</span>
-                            <span id="statFeeding" class="text-2xl font-black text-navy-800">1 / 2 Fed</span>
-                            <span class="text-[10px] text-emerald-600 font-bold block mt-0.5"><i class="fa-solid fa-check mr-1"></i> Morning Kibble Done</span>
+                            <h2 class="font-extrabold text-[15px] text-[#332508] leading-tight">Rabies Annual Booster</h2>
+                            <p class="text-xs font-semibold text-[#80693A] mt-1">Scheduled Due Date: Nov 15, 2026</p>
                         </div>
                     </div>
+                    <span class="bg-[#FEECAE] text-[#8C5200] font-bold text-xs px-4 py-2 rounded-full tracking-wide">
+                        Up Coming
+                    </span>
+                </div>
 
-                    <div class="bg-white p-5 rounded-2xl border border-coral-100 shadow-sm flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl font-bold">
-                            <i class="fa-solid fa-calendar-day"></i>
+                <!-- Record Card 4: Overdue Bordetella -->
+                <div class="bg-[#FFF3F3] border border-[#FCD2D2] rounded-3xl p-5 flex items-center justify-between transition hover:shadow-xs">
+                    <div class="flex items-center gap-4">
+                        <div class="w-11 h-11 rounded-full bg-[#E54242] flex items-center justify-center text-white shrink-0 shadow-xs">
+                            <i class="fa-solid fa-triangle-exclamation text-lg"></i>
                         </div>
                         <div>
-                            <span class="text-xs text-gray-500 font-semibold block">Active Reminders</span>
-                            <span class="text-2xl font-black text-navy-800">2 Tasks</span>
-                            <span class="text-[10px] text-blue-600 font-bold block mt-0.5"><i class="fa-solid fa-pills mr-1"></i> Flea Chewable & Salon</span>
+                            <h2 class="font-extrabold text-[15px] text-[#3B1515] leading-tight">Bordetella Kennel Cough</h2>
+                            <p class="text-xs font-semibold text-[#8A4848] mt-1">Was Due: Sep 01, 2026 (Overdue by 28 Days)</p>
                         </div>
                     </div>
+                    <span class="bg-[#FCD8D8] text-[#A32222] font-bold text-xs px-4 py-2 rounded-full tracking-wide">
+                        Overdue
+                    </span>
                 </div>
 
-                <!-- Dog Quick Profile Widget -->
-                <div class="bg-white p-6 sm:p-8 rounded-3xl border border-coral-200 shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-                    <div class="lg:col-span-4 flex items-center gap-4">
-                        <img id="dashDogImg" src="https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=300&q=80" alt="Dog Photo" class="w-20 h-20 rounded-2xl object-cover border-2 border-coral-500 shadow" onerror="this.src='https://placehold.co/300x300/E87A5D/ffffff?text=Dog'">
-                        <div class="space-y-1">
-                            <h2 id="dashDogFullName" class="text-2xl font-black text-navy-800">Buster</h2>
-                            <p id="dashDogBreedAge" class="text-xs text-gray-600 font-bold">Golden Retriever • 3 Yrs</p>
-                            <span class="inline-block text-[10px] font-extrabold bg-coral-100 text-coral-700 px-2 py-0.5 rounded-full">Active Dog</span>
-                        </div>
-                    </div>
-
-                    <div class="lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
-                        <div class="bg-cream p-3 rounded-xl border border-coral-100">
-                            <span class="text-gray-400 block text-[10px]">Weight</span>
-                            <strong id="dashDogWeight" class="text-navy-800 font-black">28.5 kg</strong>
-                        </div>
-                        <div class="bg-cream p-3 rounded-xl border border-coral-100">
-                            <span class="text-gray-400 block text-[10px]">Microchip ID</span>
-                            <strong id="dashDogMicrochip" class="text-navy-800 font-mono font-black">#98514100239128</strong>
-                        </div>
-                        <div class="bg-cream p-3 rounded-xl border border-coral-100">
-                            <span class="text-gray-400 block text-[10px]">Primary Vet</span>
-                            <strong id="dashDogVet" class="text-navy-800 font-black">Dr. Sarah Jenkins</strong>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 3. ACTIVE DOG PROFILE VIEW -->
-            <section id="view-profile" class="app-view hidden space-y-6">
-                <div class="flex justify-between items-center border-b border-coral-200 pb-4">
-                    <div>
-                        <span class="text-xs font-black text-coral-500 uppercase tracking-wider">Passports</span>
-                        <h1 class="text-2xl sm:text-3xl font-black text-navy-800">Dog Profile Details</h1>
-                    </div>
-                    <button onclick="openModal('editDogModal')" class="px-4 py-2 bg-coral-500 text-white text-xs font-bold rounded-xl shadow hover:bg-coral-600 transition-all">
-                        <i class="fa-solid fa-pen-to-square mr-1"></i> Edit Details
-                    </button>
-                </div>
-
-                <div class="bg-white p-6 sm:p-8 rounded-3xl border border-coral-200 shadow-sm grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-                    <div class="md:col-span-4 flex flex-col items-center text-center space-y-3">
-                        <img id="profDogImg" src="https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=400&q=80" alt="Dog Profile Photo" class="w-36 h-36 rounded-3xl object-cover border-4 border-coral-500 shadow-md" onerror="this.src='https://placehold.co/400x400/E87A5D/ffffff?text=Dog+Photo'">
-                        <h2 id="profDogName" class="text-2xl font-black text-navy-800">Buster</h2>
-                        <span id="profDogGender" class="text-xs bg-coral-100 text-coral-700 font-bold px-3 py-1 rounded-full">Male (Neutered)</span>
-                    </div>
-
-                    <div class="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                        <div class="bg-cream p-4 rounded-2xl border border-coral-100">
-                            <span class="text-gray-400 block font-bold">Breed</span>
-                            <strong id="profBreed" class="text-sm text-navy-800 font-black block mt-0.5">Golden Retriever</strong>
-                        </div>
-                        <div class="bg-cream p-4 rounded-2xl border border-coral-100">
-                            <span class="text-gray-400 block font-bold">Age</span>
-                            <strong id="profAge" class="text-sm text-navy-800 font-black block mt-0.5">3 Years Old</strong>
-                        </div>
-                        <div class="bg-cream p-4 rounded-2xl border border-coral-100">
-                            <span class="text-gray-400 block font-bold">Weight</span>
-                            <strong id="profWeight" class="text-sm text-navy-800 font-black block mt-0.5">28.5 kg</strong>
-                        </div>
-                        <div class="bg-cream p-4 rounded-2xl border border-coral-100">
-                            <span class="text-gray-400 block font-bold">Blood Type</span>
-                            <strong id="profBlood" class="text-sm text-navy-800 font-black block mt-0.5">DEA 1.1 Positive</strong>
-                        </div>
-                        <div class="bg-cream p-4 rounded-2xl border border-coral-100">
-                            <span class="text-gray-400 block font-bold">Microchip ID</span>
-                            <strong id="profMicrochip" class="text-sm font-mono text-navy-800 font-black block mt-0.5">#98514100239128</strong>
-                        </div>
-                        <div class="bg-cream p-4 rounded-2xl border border-coral-100">
-                            <span class="text-gray-400 block font-bold">Primary Veterinarian</span>
-                            <strong id="profVet" class="text-sm text-navy-800 font-black block mt-0.5">Dr. Sarah Jenkins</strong>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 4. VACCINATION RECORDS VIEW -->
-            <section id="view-vaccines" class="app-view hidden space-y-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-coral-200 pb-4">
-                    <div>
-                        <span class="text-xs font-black text-coral-500 uppercase tracking-wider">Immunization Protocol</span>
-                        <h1 class="text-2xl sm:text-3xl font-black text-navy-800">Vaccination Records (<span class="activeDogNameText">Buster</span>)</h1>
-                    </div>
-
-                    <button onclick="openModal('addVaccineModal')" class="px-4 py-2.5 bg-coral-500 text-white font-bold text-xs rounded-xl shadow hover:bg-coral-600 transition-all flex items-center gap-2">
-                        <i class="fa-solid fa-plus"></i> Add Vaccination Record
-                    </button>
-                </div>
-
-                <!-- Status Filter Tabs (Sitemap Match) -->
-                <div class="flex flex-wrap gap-2">
-                    <button onclick="filterVaccines('all')" id="vaxTab-all" class="vax-filter-btn px-4 py-2 rounded-xl text-xs font-bold tab-btn-active">All (4)</button>
-                    <button onclick="filterVaccines('completed')" id="vaxTab-completed" class="vax-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-white text-gray-600 hover:bg-coral-50">Completed (2)</button>
-                    <button onclick="filterVaccines('upcoming')" id="vaxTab-upcoming" class="vax-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-white text-gray-600 hover:bg-coral-50">Up Coming (1)</button>
-                    <button onclick="filterVaccines('overdue')" id="vaxTab-overdue" class="vax-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-white text-gray-600 hover:bg-coral-50">Overdue (1)</button>
-                </div>
-
-                <!-- Vaccination Cards List -->
-                <div id="vaccineListContainer" class="space-y-3">
-                    <div class="vax-card status-completed p-4 bg-emerald-50/70 rounded-2xl border border-emerald-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                        <div class="flex items-center gap-3.5">
-                            <div class="w-10 h-10 rounded-2xl bg-emerald-500 text-white flex items-center justify-center font-bold">
-                                <i class="fa-solid fa-check"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-extrabold text-navy-800 text-sm">DHPP Core Vaccine (Distemper / Parvovirus)</h4>
-                                <p class="text-xs text-gray-500">Administered: Oct 12, 2025 • Downtown Vet Hospital</p>
-                            </div>
-                        </div>
-                        <span class="text-xs font-black text-emerald-800 bg-emerald-200/80 px-3 py-1 rounded-full">Completed</span>
-                    </div>
-
-                    <div class="vax-card status-completed p-4 bg-emerald-50/70 rounded-2xl border border-emerald-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                        <div class="flex items-center gap-3.5">
-                            <div class="w-10 h-10 rounded-2xl bg-emerald-500 text-white flex items-center justify-center font-bold">
-                                <i class="fa-solid fa-check"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-extrabold text-navy-800 text-sm">Lyme Disease Initial Booster</h4>
-                                <p class="text-xs text-gray-500">Administered: May 20, 2025 • City Animal Care</p>
-                            </div>
-                        </div>
-                        <span class="text-xs font-black text-emerald-800 bg-emerald-200/80 px-3 py-1 rounded-full">Completed</span>
-                    </div>
-
-                    <div class="vax-card status-upcoming p-4 bg-amber-50/70 rounded-2xl border border-amber-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                        <div class="flex items-center gap-3.5">
-                            <div class="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center font-bold">
-                                <i class="fa-solid fa-clock"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-extrabold text-navy-800 text-sm">Rabies Annual Booster</h4>
-                                <p class="text-xs text-gray-500">Scheduled Due Date: Nov 15, 2026</p>
-                            </div>
-                        </div>
-                        <span class="text-xs font-black text-amber-800 bg-amber-200/80 px-3 py-1 rounded-full">Up Coming</span>
-                    </div>
-
-                    <div class="vax-card status-overdue p-4 bg-red-50/70 rounded-2xl border border-red-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                        <div class="flex items-center gap-3.5">
-                            <div class="w-10 h-10 rounded-2xl bg-red-500 text-white flex items-center justify-center font-bold urgent-pulse">
-                                <i class="fa-solid fa-triangle-exclamation"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-extrabold text-navy-800 text-sm">Bordetella Kennel Cough</h4>
-                                <p class="text-xs text-gray-500">Was Due: Sep 01, 2026 (Overdue by 28 Days)</p>
-                            </div>
-                        </div>
-                        <span class="text-xs font-black text-red-800 bg-red-200/80 px-3 py-1 rounded-full">Overdue</span>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 5. SCHEDULES & FEEDING VIEW -->
-            <section id="view-schedules" class="app-view hidden space-y-8">
-                <div class="border-b border-coral-200 pb-4">
-                    <span class="text-xs font-black text-coral-500 uppercase tracking-wider">Daily Routine Tracker</span>
-                    <h1 class="text-2xl sm:text-3xl font-black text-navy-800">Schedules & Reminders</h1>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    <!-- Feeding Schedule Section -->
-                    <div class="lg:col-span-6 bg-white p-6 sm:p-8 rounded-3xl border border-coral-200 shadow-sm space-y-5">
-                        <div class="flex justify-between items-center border-b pb-3">
-                            <h3 class="font-black text-navy-800 text-base flex items-center gap-2">
-                                <i class="fa-solid fa-bowl-food text-coral-500"></i> Daily Feeding Schedule
-                            </h3>
-                            <span id="feedingProgressText" class="text-xs font-bold text-coral-500">1 of 2 Completed</span>
-                        </div>
-
-                        <!-- Progress Bar -->
-                        <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
-                            <div id="feedingProgressBar" class="bg-coral-500 h-2.5 rounded-full transition-all duration-300" style="width: 50%"></div>
-                        </div>
-
-                        <div class="space-y-3">
-                            <div class="p-4 bg-cream rounded-2xl border border-coral-100 flex items-center justify-between">
-                                <div class="flex items-center gap-3">
-                                    <input type="checkbox" id="feed1" checked onchange="updateFeedingProgress()" class="w-5 h-5 text-coral-500 rounded focus:ring-coral-500 cursor-pointer">
-                                    <div>
-                                        <label for="feed1" class="text-xs font-extrabold text-navy-800 cursor-pointer">Morning Kibble Portion • 08:00 AM</label>
-                                        <p class="text-[11px] text-gray-500">1.5 cups dry kibble + Joint chew supplement</p>
-                                    </div>
-                                </div>
-                                <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-bold">Done</span>
-                            </div>
-
-                            <div class="p-4 bg-cream rounded-2xl border border-coral-100 flex items-center justify-between">
-                                <div class="flex items-center gap-3">
-                                    <input type="checkbox" id="feed2" onchange="updateFeedingProgress()" class="w-5 h-5 text-coral-500 rounded focus:ring-coral-500 cursor-pointer">
-                                    <div>
-                                        <label for="feed2" class="text-xs font-extrabold text-navy-800 cursor-pointer">Evening Dinner Meal • 06:30 PM</label>
-                                        <p class="text-[11px] text-gray-500">1.5 cups dry kibble + wet topper</p>
-                                    </div>
-                                </div>
-                                <span class="text-[10px] bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full font-bold">Pending</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Upcoming Reminders Section -->
-                    <div class="lg:col-span-6 bg-white p-6 sm:p-8 rounded-3xl border border-coral-200 shadow-sm space-y-5">
-                        <h3 class="font-black text-navy-800 text-base border-b pb-3 flex items-center gap-2">
-                            <i class="fa-solid fa-bell text-coral-500"></i> Upcoming Health Reminders
-                        </h3>
-
-                        <div class="space-y-3">
-                            <div class="p-4 bg-blue-50/80 rounded-2xl border border-blue-200 flex items-center justify-between">
-                                <div>
-                                    <h4 class="text-xs font-bold text-navy-800">Monthly Flea & Tick Chewable Tablet</h4>
-                                    <p class="text-[11px] text-gray-500">Scheduled for Oct 05, 2026</p>
-                                </div>
-                                <span class="text-[10px] font-bold text-blue-800 bg-blue-200 px-2.5 py-1 rounded-full">Medication</span>
-                            </div>
-
-                            <div class="p-4 bg-purple-50/80 rounded-2xl border border-purple-200 flex items-center justify-between">
-                                <div>
-                                    <h4 class="text-xs font-bold text-navy-800">Full Grooming & Nail Trimming</h4>
-                                    <p class="text-[11px] text-gray-500">Happy Paws Salon • Oct 10, 2026</p>
-                                </div>
-                                <span class="text-[10px] font-bold text-purple-800 bg-purple-200 px-2.5 py-1 rounded-full">Grooming</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 6. MEDICAL HISTORY VIEW -->
-            <section id="view-medical" class="app-view hidden space-y-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-coral-200 pb-4">
-                    <div>
-                        <span class="text-xs font-black text-coral-500 uppercase tracking-wider">Clinical Archive</span>
-                        <h1 class="text-2xl sm:text-3xl font-black text-navy-800">Medical History & Records</h1>
-                    </div>
-
-                    <button onclick="openModal('addMedicalModal')" class="px-4 py-2.5 bg-coral-500 text-white font-bold text-xs rounded-xl shadow hover:bg-coral-600 transition-all flex items-center gap-2">
-                        <i class="fa-solid fa-plus"></i> Add Consultation Log
-                    </button>
-                </div>
-
-                <div id="medicalLogContainer" class="space-y-4">
-                    <div class="bg-white p-6 rounded-3xl border border-coral-200 shadow-sm space-y-3">
-                        <div class="flex flex-wrap justify-between items-center gap-2 border-b border-gray-100 pb-3">
-                            <h3 class="text-sm font-black text-navy-800">Annual Physical Checkup & Teeth Cleaning</h3>
-                            <span class="text-xs font-bold text-coral-700 bg-coral-100 px-3 py-0.5 rounded-full">Aug 14, 2026</span>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                            <div>
-                                <span class="text-gray-400 font-bold block">Veterinarian & Clinic</span>
-                                <strong class="text-navy-800 block mt-0.5">Downtown Vet Hospital (Dr. Sarah Jenkins)</strong>
-                            </div>
-                            <div>
-                                <span class="text-gray-400 font-bold block">Clinical Findings & Prescriptions</span>
-                                <strong class="text-navy-800 block mt-0.5">Heart and lungs clear. Teeth cleaned with minimal tartar. Prescribed Flea chewables.</strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 7. EMERGENCY VAULT VIEW -->
-            <section id="view-vault" class="app-view hidden space-y-6">
-                <div class="border-b border-coral-200 pb-4">
-                    <span class="text-xs font-black text-red-500 uppercase tracking-wider">Critical Care Module</span>
-                    <h1 class="text-2xl sm:text-3xl font-black text-navy-800">Emergency Vault</h1>
-                </div>
-
-                <div id="printableEmergencyPassport" class="bg-gradient-to-br from-red-600 via-coral-600 to-coral-700 text-white rounded-3xl p-6 sm:p-10 shadow-xl space-y-6">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/20 pb-6">
-                        <div>
-                            <span class="inline-flex items-center gap-2 px-3 py-1 bg-white/20 rounded-full text-xs font-bold">
-                                <i class="fa-solid fa-triangle-exclamation text-yellow-300"></i> URGENT CANINE PASSPORT
-                            </span>
-                            <h2 class="text-3xl font-black mt-2 activeDogNameText">Buster</h2>
-                            <p class="text-xs text-red-100">Golden Retriever • Microchip ID: #98514100239128</p>
-                        </div>
-
-                        <div class="bg-white p-3 rounded-2xl text-center shadow text-navy-800">
-                            <i class="fa-solid fa-qrcode text-5xl"></i>
-                            <span class="block text-[8px] font-black mt-1 uppercase">Scan Vet Pass</span>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-                        <div class="bg-white/10 p-4 rounded-2xl backdrop-blur-sm border border-white/10">
-                            <span class="text-red-200 font-bold uppercase text-[10px] block">Primary Emergency Vet</span>
-                            <strong class="text-sm font-black block mt-1">Downtown Vet Clinic</strong>
-                            <p class="text-white/80 mt-0.5">(555) 234-5678 (24/7 Hotline)</p>
-                        </div>
-
-                        <div class="bg-white/10 p-4 rounded-2xl backdrop-blur-sm border border-white/10">
-                            <span class="text-red-200 font-bold uppercase text-[10px] block">Critical Allergies</span>
-                            <strong class="text-sm font-black text-yellow-300 block mt-1">Penicillin & Poultry</strong>
-                            <p class="text-white/80 mt-0.5">High reaction severity</p>
-                        </div>
-
-                        <div class="bg-white/10 p-4 rounded-2xl backdrop-blur-sm border border-white/10">
-                            <span class="text-red-200 font-bold uppercase text-[10px] block">Blood Type & Weight</span>
-                            <strong class="text-sm font-black block mt-1">DEA 1.1 Positive</strong>
-                            <p class="text-white/80 mt-0.5">Weight: 28.5 kg</p>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-wrap gap-3 pt-2">
-                        <button onclick="window.print()" class="px-5 py-2.5 bg-white text-navy-800 hover:bg-gray-100 rounded-xl text-xs font-bold shadow transition-all">
-                            <i class="fa-solid fa-print mr-1"></i> Print Urgent Card
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 8. ABOUT US VIEW -->
-            <section id="view-about" class="app-view hidden space-y-6 max-w-4xl mx-auto text-center">
-                <span class="px-3.5 py-1 rounded-full bg-coral-100 text-coral-700 text-xs font-black uppercase tracking-wider">Our Platform</span>
-                <h1 class="text-3xl font-black text-navy-800">Tailored Strictly For Dog Health 🐕</h1>
-                <p class="text-xs sm:text-sm text-gray-600 leading-relaxed max-w-2xl mx-auto">
-                    PawFolio is designed exclusively for dog parents. We eliminate paper records by consolidating Rabies schedules, feeding portioning, and veterinary health logs into one accessible digital passport.
-                </p>
-            </section>
-
-            <!-- 9. SERVICES VIEW -->
-            <section id="view-services" class="app-view hidden space-y-6">
-                <div class="text-center max-w-xl mx-auto space-y-1">
-                    <span class="text-xs font-black text-coral-500 uppercase tracking-wider">Our Services</span>
-                    <h1 class="text-3xl font-black text-navy-800">Features Built For Your Dog</h1>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-3xl border border-coral-200 space-y-2">
-                        <i class="fa-solid fa-syringe text-coral-500 text-xl"></i>
-                        <h3 class="font-bold text-navy-800 text-sm">Vaccine Reminders</h3>
-                        <p class="text-xs text-gray-500">Automated tracking for Rabies and Kennel Cough shots.</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-3xl border border-coral-200 space-y-2">
-                        <i class="fa-solid fa-bowl-food text-coral-500 text-xl"></i>
-                        <h3 class="font-bold text-navy-800 text-sm">Dietary Checklists</h3>
-                        <p class="text-xs text-gray-500">Interactive meal portioning and daily supplement tracking.</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-3xl border border-coral-200 space-y-2">
-                        <i class="fa-solid fa-vault text-coral-500 text-xl"></i>
-                        <h3 class="font-bold text-navy-800 text-sm">Emergency Passport</h3>
-                        <p class="text-xs text-gray-500">Microchip and critical allergy data ready for urgent vet visits.</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 10. CONTACT VIEW -->
-            <section id="view-contact" class="app-view hidden space-y-6 max-w-2xl mx-auto">
-                <div class="text-center space-y-1">
-                    <span class="text-xs font-black text-coral-500 uppercase tracking-wider">Get In Touch</span>
-                    <h1 class="text-3xl font-black text-navy-800">Contact Support</h1>
-                </div>
-                <form onsubmit="handleContactSubmit(event)" class="bg-white p-6 sm:p-8 rounded-3xl border border-coral-200 shadow-sm space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Your Name</label>
-                        <input type="text" required placeholder="Jane Doe" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-coral-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Message</label>
-                        <textarea rows="4" required placeholder="How can we assist your dog?" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-coral-500 focus:outline-none"></textarea>
-                    </div>
-                    <button type="submit" class="w-full py-3 bg-coral-500 text-white font-extrabold rounded-xl text-xs shadow hover:bg-coral-600 transition-all">Send Message</button>
-                </form>
-            </section>
-
-            <!-- 11. HELP & FAQs VIEW -->
-            <section id="view-help" class="app-view hidden space-y-6 max-w-3xl mx-auto">
-                <div class="text-center space-y-1">
-                    <span class="text-xs font-black text-coral-500 uppercase tracking-wider">FAQs</span>
-                    <h1 class="text-3xl font-black text-navy-800">Frequently Asked Questions</h1>
-                </div>
-                <div class="space-y-3">
-                    <div class="bg-white p-5 rounded-2xl border border-coral-200 space-y-2">
-                        <h3 class="font-extrabold text-navy-800 text-sm">How do I switch active dogs?</h3>
-                        <p class="text-xs text-gray-600">Use the dropdown menu at the top of the sidebar to seamlessly change profiles between Buster and Luna.</p>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-coral-200 space-y-2">
-                        <h3 class="font-extrabold text-navy-800 text-sm">Can I print my dog's emergency card?</h3>
-                        <p class="text-xs text-gray-600">Yes! Navigate to Emergency Vault and click "Print Urgent Card" for an optimized paper layout.</p>
-                    </div>
-                </div>
-            </section>
+            </div>
 
         </main>
     </div>
 
-    <!-- MODAL 1: LOGIN / REGISTER MODAL -->
-    <div id="authModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 relative shadow-2xl border border-coral-100 space-y-4">
-            <button onclick="closeModal('authModal')" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-            <h3 class="text-xl font-black text-navy-800">Login / Create Account</h3>
-            <form onsubmit="event.preventDefault(); closeModal('authModal'); switchView('dashboard');" class="space-y-3 text-xs font-bold text-gray-700">
-                <div>
-                    <label class="block mb-1">Email Address</label>
-                    <input type="email" required placeholder="jane@example.com" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-coral-500 focus:outline-none">
-                </div>
-                <div>
-                    <label class="block mb-1">Password</label>
-                    <input type="password" required placeholder="••••••••" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-coral-500 focus:outline-none">
-                </div>
-                <button type="submit" class="w-full py-3 bg-coral-500 text-white font-extrabold rounded-xl text-xs shadow hover:bg-coral-600 transition-all mt-2">
-                    Access Dashboard
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL 2: EDIT DOG PROFILE -->
-    <div id="editDogModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 relative shadow-2xl border border-coral-100 space-y-4">
-            <button onclick="closeModal('editDogModal')" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-            <h3 class="text-xl font-black text-navy-800">Edit Dog Profile</h3>
-            <form onsubmit="handleSaveDogProfile(event)" class="space-y-3 text-xs font-bold text-gray-700">
-                <div>
-                    <label class="block mb-1">Dog Name</label>
-                    <input type="text" id="editName" required value="Buster" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-coral-500 focus:outline-none">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block mb-1">Breed</label>
-                        <input type="text" id="editBreed" required value="Golden Retriever" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-coral-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block mb-1">Weight (kg)</label>
-                        <input type="text" id="editWeight" required value="28.5 kg" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-coral-500 focus:outline-none">
-                    </div>
-                </div>
-                <button type="submit" class="w-full py-3 bg-coral-500 text-white font-extrabold rounded-xl text-xs shadow hover:bg-coral-600 transition-all mt-2">
-                    Save Changes
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL 3: ADD VACCINE RECORD -->
-    <div id="addVaccineModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 relative shadow-2xl border border-coral-100 space-y-4">
-            <button onclick="closeModal('addVaccineModal')" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-            <h3 class="text-xl font-black text-navy-800">Add Vaccine Record</h3>
-            <form onsubmit="handleSaveVaccine(event)" class="space-y-3 text-xs font-bold text-gray-700">
-                <div>
-                    <label class="block mb-1">Vaccine Name</label>
-                    <input type="text" id="newVaxName" required placeholder="e.g. Parvovirus Booster" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-coral-500 focus:outline-none">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block mb-1">Status</label>
-                        <select id="newVaxStatus" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-coral-500 focus:outline-none bg-white">
-                            <option value="completed">Completed</option>
-                            <option value="upcoming">Up Coming</option>
-                            <option value="overdue">Overdue</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block mb-1">Date</label>
-                        <input type="date" id="newVaxDate" required class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-coral-500 focus:outline-none">
-                    </div>
-                </div>
-                <button type="submit" class="w-full py-3 bg-coral-500 text-white font-extrabold rounded-xl text-xs shadow hover:bg-coral-600 transition-all mt-2">
-                    Save Record
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL 4: ADD MEDICAL LOG -->
-    <div id="addMedicalModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 relative shadow-2xl border border-coral-100 space-y-4">
-            <button onclick="closeModal('addMedicalModal')" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-            <h3 class="text-xl font-black text-navy-800">Add Medical Log</h3>
-            <form onsubmit="handleSaveMedicalLog(event)" class="space-y-3 text-xs font-bold text-gray-700">
-                <div>
-                    <label class="block mb-1">Checkup Reason</label>
-                    <input type="text" id="medTitle" required placeholder="e.g. Ear Cleaning & Skin Check" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-coral-500 focus:outline-none">
-                </div>
-                <div>
-                    <label class="block mb-1">Diagnosis & Treatment</label>
-                    <textarea id="medDiagnosis" rows="3" required placeholder="Enter doctor notes..." class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-coral-500 focus:outline-none"></textarea>
-                </div>
-                <button type="submit" class="w-full py-3 bg-navy-800 text-white font-extrabold rounded-xl text-xs shadow hover:bg-black transition-all mt-2">
-                    Save Consultation
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- APP LOGIC -->
-    <script>
-        // DOG DATABASE
-        const dogDB = {
-            buster: {
-                name: 'Buster',
-                breed: 'Golden Retriever',
-                age: '3 Years Old',
-                weight: '28.5 kg',
-                gender: 'Male (Neutered)',
-                microchip: '#98514100239128',
-                vet: 'Dr. Sarah Jenkins',
-                blood: 'DEA 1.1 Positive',
-                img: 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=400&q=80',
-                upcoming: '1 Due',
-                overdue: '1 Action',
-                feeding: '1 / 2 Fed'
-            },
-            luna: {
-                name: 'Luna',
-                breed: 'French Bulldog',
-                age: '1 Year Old',
-                weight: '11.2 kg',
-                gender: 'Female (Spayed)',
-                microchip: '#98514100994112',
-                vet: 'Dr. Mark Sloan',
-                blood: 'DEA 1.1 Negative',
-                img: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=400&q=80',
-                upcoming: '0 Due',
-                overdue: '0 Action',
-                feeding: '2 / 2 Fed'
-            }
-        };
-
-        let currentActiveDogKey = 'buster';
-
-        // VIEW SWITCHER
-        function switchView(viewId) {
-            const views = document.querySelectorAll('.app-view');
-            views.forEach(v => v.classList.add('hidden'));
-
-            const targetView = document.getElementById(`view-${viewId}`);
-            if (targetView) targetView.classList.remove('hidden');
-
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => item.classList.remove('nav-link-active'));
-
-            const activeBtn = document.getElementById(`nav-${viewId}`);
-            if (activeBtn) activeBtn.classList.add('nav-link-active');
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // ACTIVE DOG SWITCHER
-        function switchActiveDog(key) {
-            currentActiveDogKey = key;
-            const dog = dogDB[key];
-
-            document.getElementById('dashDogName').innerText = dog.name;
-            document.getElementById('dashDogFullName').innerText = dog.name;
-            document.getElementById('dashDogBreedAge').innerText = `${dog.breed} • ${dog.age}`;
-            document.getElementById('dashDogWeight').innerText = dog.weight;
-            document.getElementById('dashDogMicrochip').innerText = dog.microchip;
-            document.getElementById('dashDogVet').innerText = dog.vet;
-            document.getElementById('dashDogImg').src = dog.img;
-
-            document.getElementById('statUpcoming').innerText = dog.upcoming;
-            document.getElementById('statOverdue').innerText = dog.overdue;
-            document.getElementById('statFeeding').innerText = dog.feeding;
-
-            document.getElementById('profDogName').innerText = dog.name;
-            document.getElementById('profDogGender').innerText = dog.gender;
-            document.getElementById('profBreed').innerText = dog.breed;
-            document.getElementById('profAge').innerText = dog.age;
-            document.getElementById('profWeight').innerText = dog.weight;
-            document.getElementById('profBlood').innerText = dog.blood;
-            document.getElementById('profMicrochip').innerText = dog.microchip;
-            document.getElementById('profVet').innerText = dog.vet;
-            document.getElementById('profDogImg').src = dog.img;
-
-            document.querySelectorAll('.activeDogNameText').forEach(el => el.innerText = dog.name);
-            document.getElementById('sidebarDogSwitcher').value = key;
-        }
-
-        // VACCINE FILTER
-        function filterVaccines(status) {
-            const cards = document.querySelectorAll('.vax-card');
-            const btns = document.querySelectorAll('.vax-filter-btn');
-
-            btns.forEach(btn => btn.className = 'vax-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-white text-gray-600 hover:bg-coral-50');
-            document.getElementById(`vaxTab-${status}`).className = 'vax-filter-btn px-4 py-2 rounded-xl text-xs font-bold tab-btn-active';
-
-            cards.forEach(card => {
-                if (status === 'all') {
-                    card.classList.remove('hidden');
-                } else {
-                    if (card.classList.contains(`status-${status}`)) {
-                        card.classList.remove('hidden');
-                    } else {
-                        card.classList.add('hidden');
-                    }
-                }
-            });
-        }
-
-        // FEEDING PROGRESS
-        function updateFeedingProgress() {
-            const f1 = document.getElementById('feed1').checked;
-            const f2 = document.getElementById('feed2').checked;
-
-            const count = (f1 ? 1 : 0) + (f2 ? 1 : 0);
-            const pct = count === 2 ? 100 : count === 1 ? 50 : 0;
-
-            document.getElementById('feedingProgressBar').style.width = `${pct}%`;
-            document.getElementById('feedingProgressText').innerText = `${count} of 2 Completed`;
-        }
-
-        // DRAWER CONTROLS
-        function toggleMobileDrawer() {
-            document.getElementById('mobileDrawer').classList.toggle('hidden');
-        }
-
-        // MODAL CONTROLS
-        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-
-        // SAVE PROFILE
-        function handleSaveDogProfile(e) {
-            e.preventDefault();
-            const dog = dogDB[currentActiveDogKey];
-            dog.name = document.getElementById('editName').value;
-            dog.breed = document.getElementById('editBreed').value;
-            dog.weight = document.getElementById('editWeight').value;
-
-            switchActiveDog(currentActiveDogKey);
-            closeModal('editDogModal');
-        }
-
-        // SAVE VACCINE
-        function handleSaveVaccine(e) {
-            e.preventDefault();
-            const name = document.getElementById('newVaxName').value;
-            const status = document.getElementById('newVaxStatus').value;
-            const date = document.getElementById('newVaxDate').value;
-
-            const container = document.getElementById('vaccineListContainer');
-            const color = status === 'completed' ? 'emerald' : status === 'upcoming' ? 'amber' : 'red';
-            const badgeText = status === 'upcoming' ? 'Up Coming' : status.charAt(0).toUpperCase() + status.slice(1);
-
-            const card = document.createElement('div');
-            card.className = `vax-card status-${status} p-4 bg-${color}-50/70 rounded-2xl border border-${color}-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4`;
-            card.innerHTML = `
-                <div class="flex items-center gap-3.5">
-                    <div class="w-10 h-10 rounded-2xl bg-${color}-500 text-white flex items-center justify-center font-bold">
-                        <i class="fa-solid fa-syringe"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-extrabold text-navy-800 text-sm">${name}</h4>
-                        <p class="text-xs text-gray-500">Date Logged: ${date}</p>
-                    </div>
-                </div>
-                <span class="text-xs font-black text-${color}-800 bg-${color}-200/80 px-3 py-1 rounded-full">${badgeText}</span>
-            `;
-
-            container.prepend(card);
-            closeModal('addVaccineModal');
-        }
-
-        // SAVE MEDICAL LOG
-        function handleSaveMedicalLog(e) {
-            e.preventDefault();
-            const title = document.getElementById('medTitle').value;
-            const diagnosis = document.getElementById('medDiagnosis').value;
-
-            const container = document.getElementById('medicalLogContainer');
-            const today = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
-
-            const log = document.createElement('div');
-            log.className = 'bg-white p-6 rounded-3xl border border-coral-200 shadow-sm space-y-3';
-            log.innerHTML = `
-                <div class="flex flex-wrap justify-between items-center gap-2 border-b border-gray-100 pb-3">
-                    <h3 class="text-sm font-black text-navy-800">${title}</h3>
-                    <span class="text-xs font-bold text-coral-700 bg-coral-100 px-3 py-0.5 rounded-full">${today}</span>
-                </div>
-                <div class="text-xs text-gray-700 font-medium">${diagnosis}</div>
-            `;
-
-            container.prepend(log);
-            closeModal('addMedicalModal');
-        }
-
-        // CONTACT FORM SUBMISSION
-        function handleContactSubmit(e) {
-            e.preventDefault();
-            alert('Thank you! Your inquiry has been sent to the PawFolio support team.');
-            switchView('dashboard');
-        }
-
-        // INIT APP
-        window.onload = function() {
-            switchActiveDog('buster');
-        };
-    </script>
 </body>
 </html>
