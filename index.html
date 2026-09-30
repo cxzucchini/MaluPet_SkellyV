@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1440, height=800, initial-scale=1.0">
-    <title>Pawfolio - Vaccination Records</title>
-    <!-- Tailwind CSS -->
+    <title>Pawfolio - Schedules & Feeding</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome 6 Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Plus Jakarta Sans for exact typographic match -->
+    <!-- Google Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&display=swap" rel="stylesheet">
@@ -22,15 +22,15 @@
                     },
                     colors: {
                         paw: {
-                            coral: '#E07A5F',
-                            coralDark: '#D1674B',
-                            bg: '#F9F6F0',
+                            coral: '#E76F51',
+                            coralHover: '#D85F42',
+                            bg: '#FAF7F2',
                             sidebar: '#FFFFFF',
-                            border: '#EBE7DF',
-                            textPrimary: '#232B38',
-                            textMuted: '#858E9A',
-                            textDarkMuted: '#58616D',
-                            cardBorder: '#E6E1D8'
+                            border: '#F0E2D8',
+                            textDark: '#2B2D42',
+                            textMuted: '#8D99AE',
+                            textSubtle: '#6C757D',
+                            activeBg: '#FDE8E1'
                         }
                     }
                 }
@@ -46,7 +46,7 @@
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #EAE5DD;
+            background-color: #E2DBD0;
             margin: 0;
             padding: 0;
             display: flex;
@@ -55,7 +55,7 @@
             min-height: 100vh;
         }
         
-        /* Rigid 1440x800 container for exact Figma HTML import */
+        /* Rigid 1440x800 frame container for exact Figma HTML import */
         .figma-frame {
             width: 1440px;
             height: 800px;
@@ -64,17 +64,30 @@
             max-width: 1440px;
             max-height: 800px;
             overflow: hidden;
-            background-color: #F9F6F0;
+            background-color: #FAF7F2;
             position: relative;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
 
-        /* Custom subtle scrollbars if needed */
-        ::-webkit-scrollbar {
-            width: 5px;
+        /* Custom scrollbar for list overflow */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #D5CFC5;
-            border-radius: 10px;
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.02);
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #E2DBD0;
+            border-radius: 9999px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #C8BFB3;
+        }
+
+        /* Modal backdrop animation styling */
+        .modal-backdrop {
+            background-color: rgba(43, 45, 66, 0.45);
+            backdrop-filter: blur(4px);
         }
     </style>
 </head>
@@ -82,205 +95,431 @@
 
     <div class="figma-frame flex flex-row select-none">
         
-        <!-- SIDEBAR (Fixed 275px width matching design) -->
-        <aside class="w-[275px] h-full bg-white border-r border-[#EAE5DD] flex flex-col justify-between px-5 py-6 shrink-0 z-10">
+        <aside class="w-[260px] h-full bg-white border-r border-[#F0E2D8] flex flex-col justify-between px-5 py-5 shrink-0 z-10">
             <div>
-                <div class="flex items-center gap-3 mb-6 px-1">
-                    <div class="w-10 h-10 rounded-2xl bg-[#E07A5F] flex items-center justify-center text-white text-xl shadow-sm shrink-0">
+                <!-- Brand Logo & Title Header -->
+                <div class="flex items-center gap-3 mb-5 px-1">
+                    <div class="w-10 h-10 rounded-2xl bg-[#E76F51] flex items-center justify-center text-white text-xl shadow-sm shrink-0">
                         <i class="fa-solid fa-paw"></i>
                     </div>
                     <div class="flex flex-col">
-                        <h1 class="font-black text-[22px] leading-tight text-[#222A35] tracking-tight">pawfolio</h1>
-                        <span class="text-[9px] font-extrabold text-[#9FA6B0] tracking-[0.15em] uppercase -mt-0.5">CANINE PASSPORT</span>
+                        <h1 class="font-black text-[22px] leading-tight text-[#2B2D42] tracking-tight">pawfolio</h1>
+                        <span class="text-[9px] font-extrabold text-[#9C8E85] tracking-[0.18em] uppercase -mt-0.5">CANINE PASSPORT</span>
                     </div>
                 </div>
 
-                <div class="bg-[#FAF3EE] rounded-2xl p-3 mb-6 border border-[#F3E5DC]">
-                    <span class="text-[9px] font-extrabold text-[#E07A5F] tracking-widest uppercase block mb-1">ACTIVE DOG PROFILE</span>
+                <!-- Active Dog Profile Card -->
+                <div class="bg-[#FAF3EE] rounded-2xl p-3 mb-5 border border-[#F0E2D8]">
+                    <span class="text-[9px] font-extrabold text-[#E76F51] tracking-widest uppercase block mb-1">ACTIVE DOG PROFILE</span>
                     <div class="flex items-center justify-between cursor-pointer">
                         <div class="flex items-center gap-2 overflow-hidden">
-                            <i class="fa-solid fa-paw text-[#E07A5F] text-xs shrink-0"></i>
-                            <span class="font-bold text-[12.5px] text-[#222A35] truncate">Buster (Golden Retriever)</span>
+                            <i class="fa-solid fa-paw text-[#E76F51] text-xs shrink-0"></i>
+                            <span class="font-bold text-[12.5px] text-[#2B2D42] truncate">Buster (Golden Retriever)</span>
                         </div>
-                        <i class="fa-solid fa-chevron-down text-[10px] text-[#222A35] ml-1 shrink-0"></i>
+                        <i class="fa-solid fa-chevron-down text-[10px] text-[#2B2D42] ml-1 shrink-0"></i>
                     </div>
                 </div>
 
+                <!-- Sidebar Navigation Links -->
                 <nav class="space-y-1">
-                    <a href="#" class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-xs font-bold text-[#555E6B] hover:bg-[#F9F6F0] transition">
-                        <i class="fa-solid fa-house text-sm w-4 text-center text-[#88909A]"></i>
-                        <span>Home Landing</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-xs font-bold text-[#555E6B] hover:bg-[#F9F6F0] transition">
-                        <i class="fa-solid fa-gauge-high text-sm w-4 text-center text-[#88909A]"></i>
+                    <a href="#" class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl text-xs font-bold text-[#6C757D] hover:bg-[#FAF7F2] transition">
+                        <i class="fa-solid fa-gauge-high text-sm w-4 text-center text-[#8D99AE]"></i>
                         <span>Dashboard</span>
                     </a>
-                    <a href="#" class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-xs font-bold text-[#555E6B] hover:bg-[#F9F6F0] transition">
-                        <i class="fa-regular fa-id-card text-sm w-4 text-center text-[#88909A]"></i>
+                    <a href="#" class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl text-xs font-bold text-[#6C757D] hover:bg-[#FAF7F2] transition">
+                        <i class="fa-regular fa-id-card text-sm w-4 text-center text-[#8D99AE]"></i>
                         <span>Dog Profile</span>
                     </a>
-                    
-                    <!-- ACTIVE STATE: Vaccinations tab with border and coral tint -->
-                    <a href="#" class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-xs font-extrabold text-[#E07A5F] bg-[#FAF0E9] border border-[#222A35] shadow-xs">
-                        <i class="fa-solid fa-syringe text-sm w-4 text-center text-[#E07A5F]"></i>
+                    <a href="#" class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl text-xs font-bold text-[#6C757D] hover:bg-[#FAF7F2] transition">
+                        <i class="fa-solid fa-dog text-sm w-4 text-center text-[#8D99AE]"></i>
+                        <span>My Pets</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl text-xs font-bold text-[#6C757D] hover:bg-[#FAF7F2] transition">
+                        <i class="fa-solid fa-syringe text-sm w-4 text-center text-[#8D99AE]"></i>
                         <span>Vaccinations</span>
                     </a>
-
-                    <a href="#" class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-xs font-bold text-[#555E6B] hover:bg-[#F9F6F0] transition">
-                        <i class="fa-regular fa-calendar-check text-sm w-4 text-center text-[#88909A]"></i>
+                    
+                    <!-- ACTIVE STATE: Schedules & Feeding -->
+                    <a href="#" class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl text-xs font-extrabold text-[#2B2D42] bg-[#FDE8E1] border border-[#F5C4B5] shadow-xs">
+                        <i class="fa-regular fa-calendar-check text-sm w-4 text-center text-[#E76F51]"></i>
                         <span>Schedules & Feeding</span>
                     </a>
-                    <a href="#" class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-xs font-bold text-[#555E6B] hover:bg-[#F9F6F0] transition">
-                        <i class="fa-solid fa-notes-medical text-sm w-4 text-center text-[#88909A]"></i>
+
+                    <a href="#" class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl text-xs font-bold text-[#6C757D] hover:bg-[#FAF7F2] transition">
+                        <i class="fa-solid fa-notes-medical text-sm w-4 text-center text-[#8D99AE]"></i>
                         <span>Medical History</span>
                     </a>
-                    <a href="#" class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-xs font-bold text-[#555E6B] hover:bg-[#F9F6F0] transition">
-                        <i class="fa-solid fa-shield-halved text-sm w-4 text-center text-[#88909A]"></i>
+                    <a href="#" class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl text-xs font-bold text-[#6C757D] hover:bg-[#FAF7F2] transition">
+                        <i class="fa-solid fa-shield-halved text-sm w-4 text-center text-[#8D99AE]"></i>
                         <span>Emergency Vault</span>
                     </a>
                 </nav>
 
                 <!-- Info & Support Group -->
-                <div class="mt-6 pt-5 border-t border-[#EAE5DD]">
-                    <span class="text-[9px] font-extrabold text-[#A1A8B2] tracking-widest uppercase px-3.5 mb-2 block">INFO & SUPPORT</span>
-                    <nav class="space-y-1">
-                        <a href="#" class="flex items-center gap-3.5 px-3.5 py-2 rounded-xl text-xs font-bold text-[#555E6B] hover:bg-[#F9F6F0] transition">
-                            <i class="fa-solid fa-circle-info text-xs w-4 text-center text-[#88909A]"></i>
+                <div class="mt-5 pt-4 border-t border-[#F0E2D8]">
+                    <span class="text-[9px] font-extrabold text-[#A0AEC0] tracking-widest uppercase px-3 mb-1.5 block">INFO & SUPPORT</span>
+                    <nav class="space-y-0.5">
+                        <a href="#" class="flex items-center gap-3.5 px-3 py-2 rounded-xl text-xs font-bold text-[#6C757D] hover:bg-[#FAF7F2] transition">
+                            <i class="fa-solid fa-circle-info text-xs w-4 text-center text-[#8D99AE]"></i>
                             <span>About Us</span>
                         </a>
-                        <a href="#" class="flex items-center gap-3.5 px-3.5 py-2 rounded-xl text-xs font-bold text-[#555E6B] hover:bg-[#F9F6F0] transition">
-                            <i class="fa-solid fa-user-doctor text-xs w-4 text-center text-[#88909A]"></i>
+                        <a href="#" class="flex items-center gap-3.5 px-3 py-2 rounded-xl text-xs font-bold text-[#6C757D] hover:bg-[#FAF7F2] transition">
+                            <i class="fa-solid fa-user-doctor text-xs w-4 text-center text-[#8D99AE]"></i>
                             <span>Our Services</span>
                         </a>
-                        <a href="#" class="flex items-center gap-3.5 px-3.5 py-2 rounded-xl text-xs font-bold text-[#555E6B] hover:bg-[#F9F6F0] transition">
-                            <i class="fa-regular fa-envelope text-xs w-4 text-center text-[#88909A]"></i>
+                        <a href="#" class="flex items-center gap-3.5 px-3 py-2 rounded-xl text-xs font-bold text-[#6C757D] hover:bg-[#FAF7F2] transition">
+                            <i class="fa-regular fa-envelope text-xs w-4 text-center text-[#8D99AE]"></i>
                             <span>Contact Us</span>
                         </a>
-                        <a href="#" class="flex items-center gap-3.5 px-3.5 py-2 rounded-xl text-xs font-bold text-[#555E6B] hover:bg-[#F9F6F0] transition">
-                            <i class="fa-regular fa-circle-question text-xs w-4 text-center text-[#88909A]"></i>
+                        <a href="#" class="flex items-center gap-3.5 px-3 py-2 rounded-xl text-xs font-bold text-[#6C757D] hover:bg-[#FAF7F2] transition">
+                            <i class="fa-regular fa-circle-question text-xs w-4 text-center text-[#8D99AE]"></i>
                             <span>Help / FAQs</span>
                         </a>
                     </nav>
                 </div>
             </div>
 
-            <div class="bg-[#FAF3EE] rounded-2xl p-2.5 flex items-center justify-between border border-[#F3E5DC]">
+            <!-- Bottom Profile Section -->
+            <div class="bg-[#FAF3EE] rounded-2xl p-2.5 flex items-center justify-between border border-[#F0E2D8]">
                 <div class="flex items-center gap-2.5">
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120" alt="Jane Doe Profile" class="w-8 h-8 rounded-full object-cover">
+                    <div class="w-8 h-8 rounded-full bg-[#E76F51] flex items-center justify-center text-white text-xs font-bold">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
                     <div class="flex flex-col">
-                        <span class="text-xs font-extrabold text-[#222A35] leading-tight">Jane Doe</span>
-                        <span class="text-[10px] font-semibold text-[#88909A] leading-tight">Verified Parent</span>
+                        <span class="text-xs font-extrabold text-[#2B2D42] leading-tight">User</span>
+                        <span class="text-[10px] font-semibold text-[#8D99AE] leading-tight">Verified Parent</span>
                     </div>
                 </div>
-                <button class="text-[#E07A5F] p-1.5 hover:opacity-80 transition">
-                    <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
+                <button class="text-[#E76F51] p-1.5 hover:opacity-80 transition">
+                    <i class="fa-solid fa-ellipsis-vertical text-xs"></i>
                 </button>
             </div>
         </aside>
 
-        <main class="flex-1 h-full px-12 py-9 flex flex-col overflow-y-auto">
+        <main class="w-[1180px] h-full px-10 py-8 flex flex-col justify-between overflow-hidden">
             
-            <!-- Header Bar -->
-            <div class="flex justify-between items-start mb-7">
-                <div>
-                    <span class="text-[11px] font-extrabold text-[#E07A5F] tracking-wider uppercase block mb-1">IMMUNIZATION PROTOCOL</span>
-                    <h1 class="text-[34px] font-black text-[#222A35] tracking-tight leading-none">Vaccination Records (Buster)</h1>
+            <div>
+                <!-- Top Header Bar Section with Add Schedule Action Button -->
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <span class="text-[11px] font-extrabold text-[#E76F51] tracking-wider uppercase block mb-1">DAILY ROUTINE & NUTRITION</span>
+                        <h1 class="text-[32px] font-black text-[#2B2D42] tracking-tight leading-none">Schedules & Feeding (Buster)</h1>
+                    </div>
+                    
+                    <!-- Primary Action Button triggering Modal Dialog -->
+                    <button id="openModalBtn" onclick="toggleModal(true)" class="bg-[#E76F51] hover:bg-[#D85F42] active:scale-95 text-white font-bold text-xs px-5 py-3 rounded-2xl flex items-center gap-2.5 shadow-sm transition cursor-pointer">
+                        <i class="fa-solid fa-plus text-xs"></i>
+                        <span>+ Add Schedule / Feeding</span>
+                    </button>
                 </div>
-                
-                <!-- Primary Action Button -->
-                <button class="bg-[#E07A5F] hover:bg-[#D1674B] text-white font-bold text-xs px-5 py-3.5 rounded-2xl flex items-center gap-2 shadow-xs transition cursor-pointer">
-                    <i class="fa-solid fa-plus text-xs"></i>
-                    <span>Add Vaccination Record</span>
-                </button>
+
+                <!-- Filter Category Tabs -->
+                <div class="flex items-center gap-3 mb-6" id="filterTabs">
+                    <button onclick="filterCategory('All')" class="tab-btn active bg-[#E76F51] text-white font-bold text-xs px-5 py-2.5 rounded-full shadow-xs transition">
+                        All Schedules (<span id="countAll">5</span>)
+                    </button>
+                    <button onclick="filterCategory('Feeding')" class="tab-btn bg-white hover:bg-gray-50 text-[#6C757D] font-bold text-xs px-5 py-2.5 rounded-full border border-[#F0E2D8] transition">
+                        Feeding Routine
+                    </button>
+                    <button onclick="filterCategory('Medication')" class="tab-btn bg-white hover:bg-gray-50 text-[#6C757D] font-bold text-xs px-5 py-2.5 rounded-full border border-[#F0E2D8] transition">
+                        Medication & Health
+                    </button>
+                    <button onclick="filterCategory('Walk')" class="tab-btn bg-white hover:bg-gray-50 text-[#6C757D] font-bold text-xs px-5 py-2.5 rounded-full border border-[#F0E2D8] transition">
+                        Walks & Activity
+                    </button>
+                </div>
+
+                <div id="scheduleContainer" class="space-y-3.5 max-w-[1080px] max-h-[580px] overflow-y-auto pr-2 custom-scroll">
+                    
+                    <!-- CARD 1: Morning Feeding -->
+                    <div class="schedule-item bg-[#F0FDF4] border border-[#A7F3D0] rounded-2xl p-4 flex items-center justify-between transition hover:shadow-xs" data-category="Feeding">
+                        <div class="flex items-center gap-4">
+                            <div class="w-11 h-11 rounded-2xl bg-[#10B981] flex items-center justify-center text-white shrink-0 shadow-xs">
+                                <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                                    <path d="M2 16c0 2.2 3.6 4 10 4s10-1.8 10-4v-3H2v3zm19.8-5.3C21.9 8.2 17.5 6 12 6S2.1 8.2 2.2 10.7c0 .1.1.2.1.3h19.4c0-.1.1-.2.1-.3zM12 2C9.2 2 7 4.2 7 7h10c0-2.8-2.2-5-5-5z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 class="font-extrabold text-[15px] text-[#064E3B] leading-tight">Morning Kibble & Wet Food Mix</h2>
+                                <p class="text-xs font-semibold text-[#047857] mt-1">7:00 AM • 1.5 cups Royal Canin Golden Retriever + 1/2 can Salmon wet food</p>
+                            </div>
+                        </div>
+                        <span class="bg-[#D1FAE5] text-[#065F46] font-bold text-xs px-3.5 py-1.5 rounded-full tracking-wide flex items-center gap-1.5 shrink-0">
+                            <i class="fa-solid fa-circle-check text-[10px]"></i>
+                            <span>Completed (7:05 AM)</span>
+                        </span>
+                    </div>
+
+                    <!-- CARD 2: Afternoon Walk -->
+                    <div class="schedule-item bg-[#F0F9FF] border border-[#BAE6FD] rounded-2xl p-4 flex items-center justify-between transition hover:shadow-xs" data-category="Walk">
+                        <div class="flex items-center gap-4">
+                            <div class="w-11 h-11 rounded-2xl bg-[#3B82F6] flex items-center justify-center text-white shrink-0 shadow-xs">
+                                <i class="fa-solid fa-person-walking text-lg"></i>
+                            </div>
+                            <div>
+                                <h2 class="font-extrabold text-[15px] text-[#0C4A6E] leading-tight">Afternoon Neighborhood Walk & Fetch</h2>
+                                <p class="text-xs font-semibold text-[#0369A1] mt-1">4:30 PM • 45 mins session @ Local Dog Park</p>
+                            </div>
+                        </div>
+                        <span class="bg-[#E0F2FE] text-[#0369A1] font-bold text-xs px-3.5 py-1.5 rounded-full tracking-wide flex items-center gap-1.5 shrink-0">
+                            <i class="fa-solid fa-person-running text-[10px]"></i>
+                            <span>Next Up (In 2 hours)</span>
+                        </span>
+                    </div>
+
+                    <!-- CARD 3: Evening Medication -->
+                    <div class="schedule-item bg-[#FEFCE8] border border-[#FDE68A] rounded-2xl p-4 flex items-center justify-between transition hover:shadow-xs" data-category="Medication">
+                        <div class="flex items-center gap-4">
+                            <div class="w-11 h-11 rounded-2xl bg-[#F59E0B] flex items-center justify-center text-white shrink-0 shadow-xs">
+                                <i class="fa-solid fa-pills text-lg"></i>
+                            </div>
+                            <div>
+                                <h2 class="font-extrabold text-[15px] text-[#713F12] leading-tight">Joint Supplement & Omega-3 Soft Chew</h2>
+                                <p class="text-xs font-semibold text-[#A16207] mt-1">6:30 PM • 1 Glucosamine tablet + 1 Fish Oil chew with water</p>
+                            </div>
+                        </div>
+                        <span class="bg-[#FEF3C7] text-[#92400E] font-bold text-xs px-3.5 py-1.5 rounded-full tracking-wide flex items-center gap-1.5 shrink-0">
+                            <i class="fa-regular fa-clock text-[10px]"></i>
+                            <span>Scheduled Today</span>
+                        </span>
+                    </div>
+
+                    <!-- CARD 4: Evening Feeding -->
+                    <div class="schedule-item bg-[#FEFCE8] border border-[#FDE68A] rounded-2xl p-4 flex items-center justify-between transition hover:shadow-xs" data-category="Feeding">
+                        <div class="flex items-center gap-4">
+                            <div class="w-11 h-11 rounded-2xl bg-[#10B981] flex items-center justify-center text-white shrink-0 shadow-xs">
+                                <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                                    <path d="M2 16c0 2.2 3.6 4 10 4s10-1.8 10-4v-3H2v3zm19.8-5.3C21.9 8.2 17.5 6 12 6S2.1 8.2 2.2 10.7c0 .1.1.2.1.3h19.4c0-.1.1-.2.1-.3zM12 2C9.2 2 7 4.2 7 7h10c0-2.8-2.2-5-5-5z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 class="font-extrabold text-[15px] text-[#713F12] leading-tight">Evening Kibble & Dental Chew</h2>
+                                <p class="text-xs font-semibold text-[#A16207] mt-1">7:00 PM • 1.5 cups Royal Canin + 1 Virbac Dental Chew</p>
+                            </div>
+                        </div>
+                        <span class="bg-[#FEF3C7] text-[#92400E] font-bold text-xs px-3.5 py-1.5 rounded-full tracking-wide flex items-center gap-1.5 shrink-0">
+                            <i class="fa-regular fa-clock text-[10px]"></i>
+                            <span>Scheduled Today</span>
+                        </span>
+                    </div>
+
+                    <!-- CARD 5: Nightly Medication -->
+                    <div class="schedule-item bg-[#FEF2F2] border border-[#FECACA] rounded-2xl p-4 flex items-center justify-between transition hover:shadow-xs" data-category="Medication">
+                        <div class="flex items-center gap-4">
+                            <div class="w-11 h-11 rounded-2xl bg-[#EF4444] flex items-center justify-center text-white shrink-0 shadow-xs">
+                                <i class="fa-solid fa-heart-pulse text-lg"></i>
+                            </div>
+                            <div>
+                                <h2 class="font-extrabold text-[15px] text-[#7F1D1D] leading-tight">Monthly Heartworm Prevention (Heartgard Plus)</h2>
+                                <p class="text-xs font-semibold text-[#991B1B] mt-1">Was Due: Yesterday, 8:00 PM • 1 Chewable Chew</p>
+                            </div>
+                        </div>
+                        <span class="bg-[#FEE2E2] text-[#991B1B] font-bold text-xs px-3.5 py-1.5 rounded-full tracking-wide flex items-center gap-1.5 shrink-0">
+                            <i class="fa-solid fa-circle-exclamation text-[10px]"></i>
+                            <span>Missed Dose</span>
+                        </span>
+                    </div>
+
+                </div>
             </div>
 
-            <div class="flex items-center gap-3 mb-8">
-                <!-- Active Pill -->
-                <button class="bg-[#E07A5F] text-white font-bold text-xs px-5 py-2.5 rounded-full shadow-xs">
-                    All (4)
-                </button>
-                <!-- Inactive Pills -->
-                <button class="bg-white hover:bg-gray-50 text-[#555E6B] font-bold text-xs px-5 py-2.5 rounded-full border border-[#EAE5DD] transition">
-                    Completed (2)
-                </button>
-                <button class="bg-white hover:bg-gray-50 text-[#555E6B] font-bold text-xs px-5 py-2.5 rounded-full border border-[#EAE5DD] transition">
-                    Up Coming (1)
-                </button>
-                <button class="bg-white hover:bg-gray-50 text-[#555E6B] font-bold text-xs px-5 py-2.5 rounded-full border border-[#EAE5DD] transition">
-                    Overdue (1)
-                </button>
-            </div>
-
-            <div class="space-y-4 max-w-[1080px]">
-                
-                <!-- Record Card 1: Completed DHPP -->
-                <div class="bg-[#EBF7F2] border border-[#BEE7D0] rounded-3xl p-5 flex items-center justify-between transition hover:shadow-xs">
-                    <div class="flex items-center gap-4">
-                        <div class="w-11 h-11 rounded-full bg-[#0EB078] flex items-center justify-center text-white shrink-0 shadow-xs">
-                            <i class="fa-solid fa-check text-lg"></i>
-                        </div>
-                        <div>
-                            <h2 class="font-extrabold text-[15px] text-[#1B3227] leading-tight">DHPP Core Vaccine (Distemper / Parvovirus)</h2>
-                            <p class="text-xs font-semibold text-[#537664] mt-1">Administered: Oct 12, 2025 • Downtown Vet Hospital</p>
-                        </div>
-                    </div>
-                    <span class="bg-[#C8F2DD] text-[#0A6841] font-bold text-xs px-4 py-2 rounded-full tracking-wide">
-                        Completed
-                    </span>
-                </div>
-
-                <!-- Record Card 2: Completed Lyme -->
-                <div class="bg-[#EBF7F2] border border-[#BEE7D0] rounded-3xl p-5 flex items-center justify-between transition hover:shadow-xs">
-                    <div class="flex items-center gap-4">
-                        <div class="w-11 h-11 rounded-full bg-[#0EB078] flex items-center justify-center text-white shrink-0 shadow-xs">
-                            <i class="fa-solid fa-check text-lg"></i>
-                        </div>
-                        <div>
-                            <h2 class="font-extrabold text-[15px] text-[#1B3227] leading-tight">Lyme Disease Initial Booster</h2>
-                            <p class="text-xs font-semibold text-[#537664] mt-1">Administered: May 20, 2025 • City Animal Care</p>
-                        </div>
-                    </div>
-                    <span class="bg-[#C8F2DD] text-[#0A6841] font-bold text-xs px-4 py-2 rounded-full tracking-wide">
-                        Completed
-                    </span>
-                </div>
-
-                <!-- Record Card 3: Up Coming Rabies -->
-                <div class="bg-[#FFFDF0] border border-[#FEE7AA] rounded-3xl p-5 flex items-center justify-between transition hover:shadow-xs">
-                    <div class="flex items-center gap-4">
-                        <div class="w-11 h-11 rounded-full bg-[#E59800] flex items-center justify-center text-white shrink-0 shadow-xs">
-                            <i class="fa-solid fa-clock text-lg"></i>
-                        </div>
-                        <div>
-                            <h2 class="font-extrabold text-[15px] text-[#332508] leading-tight">Rabies Annual Booster</h2>
-                            <p class="text-xs font-semibold text-[#80693A] mt-1">Scheduled Due Date: Nov 15, 2026</p>
-                        </div>
-                    </div>
-                    <span class="bg-[#FEECAE] text-[#8C5200] font-bold text-xs px-4 py-2 rounded-full tracking-wide">
-                        Up Coming
-                    </span>
-                </div>
-
-                <!-- Record Card 4: Overdue Bordetella -->
-                <div class="bg-[#FFF3F3] border border-[#FCD2D2] rounded-3xl p-5 flex items-center justify-between transition hover:shadow-xs">
-                    <div class="flex items-center gap-4">
-                        <div class="w-11 h-11 rounded-full bg-[#E54242] flex items-center justify-center text-white shrink-0 shadow-xs">
-                            <i class="fa-solid fa-triangle-exclamation text-lg"></i>
-                        </div>
-                        <div>
-                            <h2 class="font-extrabold text-[15px] text-[#3B1515] leading-tight">Bordetella Kennel Cough</h2>
-                            <p class="text-xs font-semibold text-[#8A4848] mt-1">Was Due: Sep 01, 2026 (Overdue by 28 Days)</p>
-                        </div>
-                    </div>
-                    <span class="bg-[#FCD8D8] text-[#A32222] font-bold text-xs px-4 py-2 rounded-full tracking-wide">
-                        Overdue
-                    </span>
-                </div>
-
+            <!-- Footer status note inside main section -->
+            <div class="pt-2 border-t border-[#F0E2D8] flex justify-between items-center text-[11px] text-[#8D99AE] font-medium">
+                <span>Auto-synchronized with Buster's Passport Routine</span>
+                <span id="footerCount">5 Total Tasks Scheduled</span>
             </div>
 
         </main>
     </div>
 
+    <div id="addModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center z-50">
+        <div class="bg-white rounded-3xl w-[520px] p-6 shadow-2xl border border-[#F0E2D8] transform transition-all scale-100">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between pb-4 border-b border-[#F0E2D8]">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-[#FDE8E1] flex items-center justify-center text-[#E76F51]">
+                        <i class="fa-solid fa-calendar-plus text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-lg text-[#2B2D42]">Add Schedule / Feeding Item</h3>
+                        <p class="text-xs font-semibold text-[#8D99AE]">Create a new routine or reminder for Buster</p>
+                    </div>
+                </div>
+                <button onclick="toggleModal(false)" class="text-[#8D99AE] hover:text-[#2B2D42] p-1.5 rounded-full hover:bg-gray-100 transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Form -->
+            <form id="scheduleForm" onsubmit="handleFormSubmit(event)" class="mt-4 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-[#2B2D42] mb-1">Title / Routine Name *</label>
+                    <input type="text" id="itemTitle" required placeholder="e.g. Afternoon Kibble & Supplements" class="w-full px-3.5 py-2.5 rounded-xl border border-[#F0E2D8] text-xs font-semibold text-[#2B2D42] focus:outline-none focus:border-[#E76F51] focus:ring-1 focus:ring-[#E76F51] bg-[#FAF7F2]">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-[#2B2D42] mb-1">Category *</label>
+                        <select id="itemCategory" required class="w-full px-3.5 py-2.5 rounded-xl border border-[#F0E2D8] text-xs font-semibold text-[#2B2D42] focus:outline-none focus:border-[#E76F51] bg-[#FAF7F2]">
+                            <option value="Feeding">Feeding Routine</option>
+                            <option value="Medication">Medication & Health</option>
+                            <option value="Walk">Walks & Activity</option>
+                            <option value="Training">Training Session</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-[#2B2D42] mb-1">Scheduled Time *</label>
+                        <input type="text" id="itemTime" required placeholder="e.g. 05:30 PM" class="w-full px-3.5 py-2.5 rounded-xl border border-[#F0E2D8] text-xs font-semibold text-[#2B2D42] focus:outline-none focus:border-[#E76F51] bg-[#FAF7F2]">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-[#2B2D42] mb-1">Portion / Instructions / Details *</label>
+                    <input type="text" id="itemDetails" required placeholder="e.g. 1 cup kibble + 1 spoon pumpkin puree" class="w-full px-3.5 py-2.5 rounded-xl border border-[#F0E2D8] text-xs font-semibold text-[#2B2D42] focus:outline-none focus:border-[#E76F51] bg-[#FAF7F2]">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-[#2B2D42] mb-1">Frequency / Days</label>
+                        <select id="itemFrequency" class="w-full px-3.5 py-2.5 rounded-xl border border-[#F0E2D8] text-xs font-semibold text-[#2B2D42] focus:outline-none focus:border-[#E76F51] bg-[#FAF7F2]">
+                            <option value="Daily">Daily</option>
+                            <option value="Weekdays">Weekdays (Mon-Fri)</option>
+                            <option value="Weekends">Weekends</option>
+                            <option value="Once">One-time Task</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-[#2B2D42] mb-1">Initial Status</label>
+                        <select id="itemStatus" class="w-full px-3.5 py-2.5 rounded-xl border border-[#F0E2D8] text-xs font-semibold text-[#2B2D42] focus:outline-none focus:border-[#E76F51] bg-[#FAF7F2]">
+                            <option value="Scheduled">Scheduled Today</option>
+                            <option value="Next">Next Up</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Modal Buttons -->
+                <div class="flex items-center justify-end gap-3 pt-3 border-t border-[#F0E2D8]">
+                    <button type="button" onclick="toggleModal(false)" class="px-4 py-2.5 rounded-xl text-xs font-bold text-[#6C757D] hover:bg-gray-100 transition">
+                        Cancel
+                    </button>
+                    <button type="submit" class="bg-[#E76F51] hover:bg-[#D85F42] active:scale-95 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition shadow-xs flex items-center gap-2">
+                        <i class="fa-solid fa-check text-xs"></i>
+                        <span>Save Schedule</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let totalCount = 5;
+
+        // Toggle Modal Visibility
+        function toggleModal(show) {
+            const modal = document.getElementById('addModal');
+            if (show) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            } else {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.getElementById('scheduleForm').reset();
+            }
+        }
+
+        // Filter functionality
+        function filterCategory(category) {
+            const items = document.querySelectorAll('.schedule-item');
+            const tabs = document.querySelectorAll('.tab-btn');
+
+            tabs.forEach(tab => {
+                tab.classList.remove('bg-[#E76F51]', 'text-white');
+                tab.classList.add('bg-white', 'text-[#6C757D]', 'border', 'border-[#F0E2D8]');
+            });
+
+            event.currentTarget.classList.remove('bg-white', 'text-[#6C757D]', 'border', 'border-[#F0E2D8]');
+            event.currentTarget.classList.add('bg-[#E76F51]', 'text-white');
+
+            items.forEach(item => {
+                if (category === 'All' || item.dataset.category === category) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Handle Schedule Creation
+        function handleFormSubmit(event) {
+            event.preventDefault();
+
+            const title = document.getElementById('itemTitle').value;
+            const category = document.getElementById('itemCategory').value;
+            const time = document.getElementById('itemTime').value;
+            const details = document.getElementById('itemDetails').value;
+            const status = document.getElementById('itemStatus').value;
+
+            // Configure visual attributes based on category and status
+            let bgClass = 'bg-[#FEFCE8] border-[#FDE68A]';
+            let iconBg = 'bg-[#F59E0B]';
+            let iconHtml = '<i class="fa-solid fa-clock text-lg"></i>';
+            let statusBadge = `<span class="bg-[#FEF3C7] text-[#92400E] font-bold text-xs px-3.5 py-1.5 rounded-full tracking-wide flex items-center gap-1.5 shrink-0"><i class="fa-regular fa-clock text-[10px]"></i><span>Scheduled Today</span></span>`;
+            let textColor = 'text-[#713F12]';
+            let subColor = 'text-[#A16207]';
+
+            if (category === 'Feeding') {
+                iconBg = 'bg-[#10B981]';
+                iconHtml = `<svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M2 16c0 2.2 3.6 4 10 4s10-1.8 10-4v-3H2v3zm19.8-5.3C21.9 8.2 17.5 6 12 6S2.1 8.2 2.2 10.7c0 .1.1.2.1.3h19.4c0-.1.1-.2.1-.3zM12 2C9.2 2 7 4.2 7 7h10c0-2.8-2.2-5-5-5z"/></svg>`;
+            } else if (category === 'Walk') {
+                iconBg = 'bg-[#3B82F6]';
+                iconHtml = `<i class="fa-solid fa-person-walking text-lg"></i>`;
+            } else if (category === 'Training') {
+                iconBg = 'bg-[#8B5CF6]';
+                iconHtml = `<i class="fa-solid fa-award text-lg"></i>`;
+            }
+
+            if (status === 'Completed') {
+                bgClass = 'bg-[#F0FDF4] border-[#A7F3D0]';
+                textColor = 'text-[#064E3B]';
+                subColor = 'text-[#047857]';
+                statusBadge = `<span class="bg-[#D1FAE5] text-[#065F46] font-bold text-xs px-3.5 py-1.5 rounded-full tracking-wide flex items-center gap-1.5 shrink-0"><i class="fa-solid fa-circle-check text-[10px]"></i><span>Completed</span></span>`;
+            } else if (status === 'Next') {
+                bgClass = 'bg-[#F0F9FF] border-[#BAE6FD]';
+                textColor = 'text-[#0C4A6E]';
+                subColor = 'text-[#0369A1]';
+                statusBadge = `<span class="bg-[#E0F2FE] text-[#0369A1] font-bold text-xs px-3.5 py-1.5 rounded-full tracking-wide flex items-center gap-1.5 shrink-0"><i class="fa-solid fa-person-running text-[10px]"></i><span>Next Up</span></span>`;
+            }
+
+            // Create Card Markup
+            const newCard = document.createElement('div');
+            newCard.className = `schedule-item ${bgClass} border rounded-2xl p-4 flex items-center justify-between transition hover:shadow-xs`;
+            newCard.setAttribute('data-category', category);
+            newCard.innerHTML = `
+                <div class="flex items-center gap-4">
+                    <div class="w-11 h-11 rounded-2xl ${iconBg} flex items-center justify-center text-white shrink-0 shadow-xs">
+                        ${iconHtml}
+                    </div>
+                    <div>
+                        <h2 class="font-extrabold text-[15px] ${textColor} leading-tight">${title}</h2>
+                        <p class="text-xs font-semibold ${subColor} mt-1">${time} • ${details}</p>
+                    </div>
+                </div>
+                ${statusBadge}
+            `;
+
+            // Append Card
+            const container = document.getElementById('scheduleContainer');
+            container.prepend(newCard);
+
+            // Update Counts
+            totalCount++;
+            document.getElementById('countAll').innerText = totalCount;
+            document.getElementById('footerCount').innerText = `${totalCount} Total Tasks Scheduled`;
+
+            // Close Modal
+            toggleModal(false);
+        }
+    </script>
 </body>
 </html>
