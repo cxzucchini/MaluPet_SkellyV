@@ -2,524 +2,424 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=1440, height=800, initial-scale=1.0">
-    <title>Pawfolio - Schedules & Feeding</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome 6 Icons -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vaccination Records - Pet Dashboard</title>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Plus Jakarta Sans -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&display=swap" rel="stylesheet">
     
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                    },
-                    colors: {
-                        paw: {
-                            coral: '#E76F51',
-                            coralHover: '#D85F42',
-                            bg: '#FAF7F2',
-                            sidebar: '#FFFFFF',
-                            border: '#F0E2D8',
-                            textDark: '#2B2D42',
-                            textMuted: '#8D99AE',
-                            textSubtle: '#6C757D',
-                            activeBg: '#FDE8E1'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
     <style>
+        :root {
+            --primary-orange: #E86A46;
+            --primary-orange-hover: #d65a36;
+            --bg-body: #F8F9FB;
+            --bg-sidebar: #FFFFFF;
+            --bg-card: #FFFFFF;
+            --text-dark: #1F2937;
+            --text-gray: #6B7280;
+            --text-light-gray: #9CA3AF;
+            --border-color: #F3F4F6;
+            
+            /* Status Colors */
+            --status-green-bg: #D1FAE5;
+            --status-green-text: #065F46;
+            --status-yellow-bg: #FEF3C7;
+            --status-yellow-text: #92400E;
+            --status-red-bg: #FEE2E2;
+            --status-red-text: #991B1B;
+
+            /* Sidebar Dimensions */
+            --sidebar-width: 260px;
+        }
+
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #E2DBD0;
-            margin: 0;
-            padding: 0;
+            background-color: var(--bg-body);
+            color: var(--text-dark);
             display: flex;
-            justify-content: center;
-            align-items: center;
             min-height: 100vh;
         }
-        
-        /* Rigid 1440x800 frame container for exact Figma HTML import */
-        .figma-frame {
-            width: 1440px;
-            height: 800px;
-            min-width: 1440px;
-            min-height: 800px;
-            max-width: 1440px;
-            max-height: 800px;
-            overflow: hidden;
-            background-color: #FAF7F2;
-            position: relative;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+        /* --- Sidebar Styling --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            padding: 24px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
         }
 
-        /* Custom scrollbar for list overflow */
-        .custom-scroll::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scroll::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.02);
-        }
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: #E2DBD0;
-            border-radius: 9999px;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb:hover {
-            background: #C8BFB3;
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--primary-orange);
+            margin-bottom: 20px;
         }
 
-        /* Modal backdrop animation styling */
-        .modal-backdrop {
-            background-color: rgba(43, 45, 66, 0.45);
-            backdrop-filter: blur(4px);
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            list-style: none;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: var(--text-gray);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .nav-item:hover {
+            background-color: #FFF7F5;
+            color: var(--primary-orange);
+        }
+
+        .nav-item.active {
+            background-color: #FFF0EC; /* Light orange background */
+            color: var(--primary-orange);
+            font-weight: 600;
+        }
+
+        /* --- Main Content Styling --- */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 40px;
+            max-width: 1400px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-orange);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-orange-hover);
+        }
+
+        /* --- Records Container --- */
+        .records-container {
+            background-color: var(--bg-card);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-tab {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .filter-tab.active {
+            background-color: var(--primary-orange);
+            color: white;
+        }
+
+        .filter-tab.inactive {
+            background-color: #FFF0EC;
+            color: var(--primary-orange);
+        }
+
+        .filter-tab.inactive:hover {
+            background-color: #ffe4dc;
+        }
+
+        /* --- Record List --- */
+        .record-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .record-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-radius: 12px;
+            transition: transform 0.2s;
+        }
+
+        .record-item:hover {
+            transform: translateX(4px);
+        }
+
+        /* Status Background Variants */
+        .record-item.completed {
+            background-color: #F0FDF4; /* Very light green */
+            border-left: 4px solid #22C55E;
+        }
+
+        .record-item.upcoming {
+            background-color: #FFFBEB; /* Very light yellow */
+            border-left: 4px solid #F59E0B;
+        }
+
+        .record-item.overdue {
+            background-color: #FEF2F2; /* Very light red */
+            border-left: 4px solid #EF4444;
+        }
+
+        .record-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .icon-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .completed .icon-circle {
+            background-color: #DCFCE7;
+            color: #16A34A;
+        }
+
+        .upcoming .icon-circle {
+            background-color: #FEF3C7;
+            color: #D97706;
+        }
+
+        .overdue .icon-circle {
+            background-color: #FEE2E2;
+            color: #DC2626;
+        }
+
+        .details h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .details p {
+            font-size: 13px;
+            color: var(--text-gray);
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.completed {
+            background-color: var(--status-green-bg);
+            color: var(--status-green-text);
+        }
+
+        .status-badge.upcoming {
+            background-color: var(--status-yellow-bg);
+            color: var(--status-yellow-text);
+        }
+
+        .status-badge.overdue {
+            background-color: var(--status-red-bg);
+            color: var(--status-red-text);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none; /* Hidden on mobile for simplicity */
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            .record-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="figma-frame flex flex-row select-none">
-        
-        <aside class="w-[260px] h-full bg-white border-r border-[#F0E2D8] flex flex-col justify-between px-5 py-5 shrink-0 z-10">
-            <div>
-                <!-- Brand Logo & Title Header -->
-                <div class="flex items-center gap-3 mb-5 px-1">
-                    <div class="w-10 h-10 rounded-2xl bg-[#E76F51] flex items-center justify-center text-white text-xl shadow-sm shrink-0">
-                        <i class="fa-solid fa-paw"></i>
-                    </div>
-                    <div class="flex flex-col">
-                        <h1 class="font-black text-[22px] leading-tight text-[#2B2D42] tracking-tight">pawfolio</h1>
-                        <span class="text-[9px] font-extrabold text-[#9C8E85] tracking-[0.18em] uppercase -mt-0.5">CANINE PASSPORT</span>
-                    </div>
-                </div>
-
-                <!-- Active Dog Profile Card -->
-                <div class="bg-[#FAF3EE] rounded-2xl p-3 mb-5 border border-[#F0E2D8]">
-                    <span class="text-[9px] font-extrabold text-[#E76F51] tracking-widest uppercase block mb-1">ACTIVE DOG PROFILE</span>
-                    <div class="flex items-center justify-between cursor-pointer">
-                        <div class="flex items-center gap-2 overflow-hidden">
-                            <i class="fa-solid fa-paw text-[#E76F51] text-xs shrink-0"></i>
-                            <span class="font-bold text-[12.5px] text-[#2B2D42] truncate">Buster (Golden Retriever)</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-down text-[10px] text-[#2B2D42] ml-1 shrink-0"></i>
-                    </div>
-                </div>
-
-                <!-- Sidebar Navigation Links -->
-                <nav class="space-y-1">
-                    <a href="#" class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl text-xs font-bold text-[#6C757D] hover:bg-[#FAF7F2] transition">
-                        <i class="fa-solid fa-gauge-high text-sm w-4 text-center text-[#8D99AE]"></i>
-                        <span>Dashboard</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl text-xs font-bold text-[#6C757D] hover:bg-[#FAF7F2] transition">
-                        <i class="fa-regular fa-id-card text-sm w-4 text-center text-[#8D99AE]"></i>
-                        <span>Dog Profile</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl text-xs font-bold text-[#6C757D] hover:bg-[#FAF7F2] transition">
-                        <i class="fa-solid fa-dog text-sm w-4 text-center text-[#8D99AE]"></i>
-                        <span>My Pets</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl text-xs font-bold text-[#6C757D] hover:bg-[#FAF7F2] transition">
-                        <i class="fa-solid fa-syringe text-sm w-4 text-center text-[#8D99AE]"></i>
-                        <span>Vaccinations</span>
-                    </a>
-                    
-                    <!-- ACTIVE STATE: Schedules & Feeding -->
-                    <a href="#" class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl text-xs font-extrabold text-[#2B2D42] bg-[#FDE8E1] border border-[#F5C4B5] shadow-xs">
-                        <i class="fa-regular fa-calendar-check text-sm w-4 text-center text-[#E76F51]"></i>
-                        <span>Schedules & Feeding</span>
-                    </a>
-
-                    <a href="#" class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl text-xs font-bold text-[#6C757D] hover:bg-[#FAF7F2] transition">
-                        <i class="fa-solid fa-notes-medical text-sm w-4 text-center text-[#8D99AE]"></i>
-                        <span>Medical History</span>
-                    </a>
-                    <a href="#" class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl text-xs font-bold text-[#6C757D] hover:bg-[#FAF7F2] transition">
-                        <i class="fa-solid fa-shield-halved text-sm w-4 text-center text-[#8D99AE]"></i>
-                        <span>Emergency Vault</span>
-                    </a>
-                </nav>
-
-                <!-- Info & Support Group -->
-                <div class="mt-5 pt-4 border-t border-[#F0E2D8]">
-                    <span class="text-[9px] font-extrabold text-[#A0AEC0] tracking-widest uppercase px-3 mb-1.5 block">INFO & SUPPORT</span>
-                    <nav class="space-y-0.5">
-                        <a href="#" class="flex items-center gap-3.5 px-3 py-2 rounded-xl text-xs font-bold text-[#6C757D] hover:bg-[#FAF7F2] transition">
-                            <i class="fa-solid fa-circle-info text-xs w-4 text-center text-[#8D99AE]"></i>
-                            <span>About Us</span>
-                        </a>
-                        <a href="#" class="flex items-center gap-3.5 px-3 py-2 rounded-xl text-xs font-bold text-[#6C757D] hover:bg-[#FAF7F2] transition">
-                            <i class="fa-solid fa-user-doctor text-xs w-4 text-center text-[#8D99AE]"></i>
-                            <span>Our Services</span>
-                        </a>
-                        <a href="#" class="flex items-center gap-3.5 px-3 py-2 rounded-xl text-xs font-bold text-[#6C757D] hover:bg-[#FAF7F2] transition">
-                            <i class="fa-regular fa-envelope text-xs w-4 text-center text-[#8D99AE]"></i>
-                            <span>Contact Us</span>
-                        </a>
-                        <a href="#" class="flex items-center gap-3.5 px-3 py-2 rounded-xl text-xs font-bold text-[#6C757D] hover:bg-[#FAF7F2] transition">
-                            <i class="fa-regular fa-circle-question text-xs w-4 text-center text-[#8D99AE]"></i>
-                            <span>Help / FAQs</span>
-                        </a>
-                    </nav>
-                </div>
-            </div>
-
-            <!-- Bottom Profile Section -->
-            <div class="bg-[#FAF3EE] rounded-2xl p-2.5 flex items-center justify-between border border-[#F0E2D8]">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-full bg-[#E76F51] flex items-center justify-center text-white text-xs font-bold">
-                        <i class="fa-solid fa-user"></i>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-xs font-extrabold text-[#2B2D42] leading-tight">User</span>
-                        <span class="text-[10px] font-semibold text-[#8D99AE] leading-tight">Verified Parent</span>
-                    </div>
-                </div>
-                <button class="text-[#E76F51] p-1.5 hover:opacity-80 transition">
-                    <i class="fa-solid fa-ellipsis-vertical text-xs"></i>
-                </button>
-            </div>
-        </aside>
-
-        <main class="w-[1180px] h-full px-10 py-8 flex flex-col justify-between overflow-hidden">
-            
-            <div>
-                <!-- Top Header Bar Section with Add Schedule Action Button -->
-                <div class="flex justify-between items-start mb-6">
-                    <div>
-                        <span class="text-[11px] font-extrabold text-[#E76F51] tracking-wider uppercase block mb-1">DAILY ROUTINE & NUTRITION</span>
-                        <h1 class="text-[32px] font-black text-[#2B2D42] tracking-tight leading-none">Schedules & Feeding (Buster)</h1>
-                    </div>
-                    
-                    <!-- Primary Action Button triggering Modal Dialog -->
-                    <button id="openModalBtn" onclick="toggleModal(true)" class="bg-[#E76F51] hover:bg-[#D85F42] active:scale-95 text-white font-bold text-xs px-5 py-3 rounded-2xl flex items-center gap-2.5 shadow-sm transition cursor-pointer">
-                        <i class="fa-solid fa-plus text-xs"></i>
-                        <span>+ Add Schedule / Feeding</span>
-                    </button>
-                </div>
-
-                <!-- Filter Category Tabs -->
-                <div class="flex items-center gap-3 mb-6" id="filterTabs">
-                    <button onclick="filterCategory('All')" class="tab-btn active bg-[#E76F51] text-white font-bold text-xs px-5 py-2.5 rounded-full shadow-xs transition">
-                        All Schedules (<span id="countAll">5</span>)
-                    </button>
-                    <button onclick="filterCategory('Feeding')" class="tab-btn bg-white hover:bg-gray-50 text-[#6C757D] font-bold text-xs px-5 py-2.5 rounded-full border border-[#F0E2D8] transition">
-                        Feeding Routine
-                    </button>
-                    <button onclick="filterCategory('Medication')" class="tab-btn bg-white hover:bg-gray-50 text-[#6C757D] font-bold text-xs px-5 py-2.5 rounded-full border border-[#F0E2D8] transition">
-                        Medication & Health
-                    </button>
-                    <button onclick="filterCategory('Walk')" class="tab-btn bg-white hover:bg-gray-50 text-[#6C757D] font-bold text-xs px-5 py-2.5 rounded-full border border-[#F0E2D8] transition">
-                        Walks & Activity
-                    </button>
-                </div>
-
-                <div id="scheduleContainer" class="space-y-3.5 max-w-[1080px] max-h-[580px] overflow-y-auto pr-2 custom-scroll">
-                    
-                    <!-- CARD 1: Morning Feeding -->
-                    <div class="schedule-item bg-[#F0FDF4] border border-[#A7F3D0] rounded-2xl p-4 flex items-center justify-between transition hover:shadow-xs" data-category="Feeding">
-                        <div class="flex items-center gap-4">
-                            <div class="w-11 h-11 rounded-2xl bg-[#10B981] flex items-center justify-center text-white shrink-0 shadow-xs">
-                                <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
-                                    <path d="M2 16c0 2.2 3.6 4 10 4s10-1.8 10-4v-3H2v3zm19.8-5.3C21.9 8.2 17.5 6 12 6S2.1 8.2 2.2 10.7c0 .1.1.2.1.3h19.4c0-.1.1-.2.1-.3zM12 2C9.2 2 7 4.2 7 7h10c0-2.8-2.2-5-5-5z"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <h2 class="font-extrabold text-[15px] text-[#064E3B] leading-tight">Morning Kibble & Wet Food Mix</h2>
-                                <p class="text-xs font-semibold text-[#047857] mt-1">7:00 AM • 1.5 cups Royal Canin Golden Retriever + 1/2 can Salmon wet food</p>
-                            </div>
-                        </div>
-                        <span class="bg-[#D1FAE5] text-[#065F46] font-bold text-xs px-3.5 py-1.5 rounded-full tracking-wide flex items-center gap-1.5 shrink-0">
-                            <i class="fa-solid fa-circle-check text-[10px]"></i>
-                            <span>Completed (7:05 AM)</span>
-                        </span>
-                    </div>
-
-                    <!-- CARD 2: Afternoon Walk -->
-                    <div class="schedule-item bg-[#F0F9FF] border border-[#BAE6FD] rounded-2xl p-4 flex items-center justify-between transition hover:shadow-xs" data-category="Walk">
-                        <div class="flex items-center gap-4">
-                            <div class="w-11 h-11 rounded-2xl bg-[#3B82F6] flex items-center justify-center text-white shrink-0 shadow-xs">
-                                <i class="fa-solid fa-person-walking text-lg"></i>
-                            </div>
-                            <div>
-                                <h2 class="font-extrabold text-[15px] text-[#0C4A6E] leading-tight">Afternoon Neighborhood Walk & Fetch</h2>
-                                <p class="text-xs font-semibold text-[#0369A1] mt-1">4:30 PM • 45 mins session @ Local Dog Park</p>
-                            </div>
-                        </div>
-                        <span class="bg-[#E0F2FE] text-[#0369A1] font-bold text-xs px-3.5 py-1.5 rounded-full tracking-wide flex items-center gap-1.5 shrink-0">
-                            <i class="fa-solid fa-person-running text-[10px]"></i>
-                            <span>Next Up (In 2 hours)</span>
-                        </span>
-                    </div>
-
-                    <!-- CARD 3: Evening Medication -->
-                    <div class="schedule-item bg-[#FEFCE8] border border-[#FDE68A] rounded-2xl p-4 flex items-center justify-between transition hover:shadow-xs" data-category="Medication">
-                        <div class="flex items-center gap-4">
-                            <div class="w-11 h-11 rounded-2xl bg-[#F59E0B] flex items-center justify-center text-white shrink-0 shadow-xs">
-                                <i class="fa-solid fa-pills text-lg"></i>
-                            </div>
-                            <div>
-                                <h2 class="font-extrabold text-[15px] text-[#713F12] leading-tight">Joint Supplement & Omega-3 Soft Chew</h2>
-                                <p class="text-xs font-semibold text-[#A16207] mt-1">6:30 PM • 1 Glucosamine tablet + 1 Fish Oil chew with water</p>
-                            </div>
-                        </div>
-                        <span class="bg-[#FEF3C7] text-[#92400E] font-bold text-xs px-3.5 py-1.5 rounded-full tracking-wide flex items-center gap-1.5 shrink-0">
-                            <i class="fa-regular fa-clock text-[10px]"></i>
-                            <span>Scheduled Today</span>
-                        </span>
-                    </div>
-
-                    <!-- CARD 4: Evening Feeding -->
-                    <div class="schedule-item bg-[#FEFCE8] border border-[#FDE68A] rounded-2xl p-4 flex items-center justify-between transition hover:shadow-xs" data-category="Feeding">
-                        <div class="flex items-center gap-4">
-                            <div class="w-11 h-11 rounded-2xl bg-[#10B981] flex items-center justify-center text-white shrink-0 shadow-xs">
-                                <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
-                                    <path d="M2 16c0 2.2 3.6 4 10 4s10-1.8 10-4v-3H2v3zm19.8-5.3C21.9 8.2 17.5 6 12 6S2.1 8.2 2.2 10.7c0 .1.1.2.1.3h19.4c0-.1.1-.2.1-.3zM12 2C9.2 2 7 4.2 7 7h10c0-2.8-2.2-5-5-5z"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <h2 class="font-extrabold text-[15px] text-[#713F12] leading-tight">Evening Kibble & Dental Chew</h2>
-                                <p class="text-xs font-semibold text-[#A16207] mt-1">7:00 PM • 1.5 cups Royal Canin + 1 Virbac Dental Chew</p>
-                            </div>
-                        </div>
-                        <span class="bg-[#FEF3C7] text-[#92400E] font-bold text-xs px-3.5 py-1.5 rounded-full tracking-wide flex items-center gap-1.5 shrink-0">
-                            <i class="fa-regular fa-clock text-[10px]"></i>
-                            <span>Scheduled Today</span>
-                        </span>
-                    </div>
-
-                    <!-- CARD 5: Nightly Medication -->
-                    <div class="schedule-item bg-[#FEF2F2] border border-[#FECACA] rounded-2xl p-4 flex items-center justify-between transition hover:shadow-xs" data-category="Medication">
-                        <div class="flex items-center gap-4">
-                            <div class="w-11 h-11 rounded-2xl bg-[#EF4444] flex items-center justify-center text-white shrink-0 shadow-xs">
-                                <i class="fa-solid fa-heart-pulse text-lg"></i>
-                            </div>
-                            <div>
-                                <h2 class="font-extrabold text-[15px] text-[#7F1D1D] leading-tight">Monthly Heartworm Prevention (Heartgard Plus)</h2>
-                                <p class="text-xs font-semibold text-[#991B1B] mt-1">Was Due: Yesterday, 8:00 PM • 1 Chewable Chew</p>
-                            </div>
-                        </div>
-                        <span class="bg-[#FEE2E2] text-[#991B1B] font-bold text-xs px-3.5 py-1.5 rounded-full tracking-wide flex items-center gap-1.5 shrink-0">
-                            <i class="fa-solid fa-circle-exclamation text-[10px]"></i>
-                            <span>Missed Dose</span>
-                        </span>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- Footer status note inside main section -->
-            <div class="pt-2 border-t border-[#F0E2D8] flex justify-between items-center text-[11px] text-[#8D99AE] font-medium">
-                <span>Auto-synchronized with Buster's Passport Routine</span>
-                <span id="footerCount">5 Total Tasks Scheduled</span>
-            </div>
-
-        </main>
-    </div>
-
-    <div id="addModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center z-50">
-        <div class="bg-white rounded-3xl w-[520px] p-6 shadow-2xl border border-[#F0E2D8] transform transition-all scale-100">
-            <!-- Modal Header -->
-            <div class="flex items-center justify-between pb-4 border-b border-[#F0E2D8]">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-[#FDE8E1] flex items-center justify-center text-[#E76F51]">
-                        <i class="fa-solid fa-calendar-plus text-lg"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-black text-lg text-[#2B2D42]">Add Schedule / Feeding Item</h3>
-                        <p class="text-xs font-semibold text-[#8D99AE]">Create a new routine or reminder for Buster</p>
-                    </div>
-                </div>
-                <button onclick="toggleModal(false)" class="text-[#8D99AE] hover:text-[#2B2D42] p-1.5 rounded-full hover:bg-gray-100 transition">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-
-            <!-- Form -->
-            <form id="scheduleForm" onsubmit="handleFormSubmit(event)" class="mt-4 space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-[#2B2D42] mb-1">Title / Routine Name *</label>
-                    <input type="text" id="itemTitle" required placeholder="e.g. Afternoon Kibble & Supplements" class="w-full px-3.5 py-2.5 rounded-xl border border-[#F0E2D8] text-xs font-semibold text-[#2B2D42] focus:outline-none focus:border-[#E76F51] focus:ring-1 focus:ring-[#E76F51] bg-[#FAF7F2]">
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-[#2B2D42] mb-1">Category *</label>
-                        <select id="itemCategory" required class="w-full px-3.5 py-2.5 rounded-xl border border-[#F0E2D8] text-xs font-semibold text-[#2B2D42] focus:outline-none focus:border-[#E76F51] bg-[#FAF7F2]">
-                            <option value="Feeding">Feeding Routine</option>
-                            <option value="Medication">Medication & Health</option>
-                            <option value="Walk">Walks & Activity</option>
-                            <option value="Training">Training Session</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-[#2B2D42] mb-1">Scheduled Time *</label>
-                        <input type="text" id="itemTime" required placeholder="e.g. 05:30 PM" class="w-full px-3.5 py-2.5 rounded-xl border border-[#F0E2D8] text-xs font-semibold text-[#2B2D42] focus:outline-none focus:border-[#E76F51] bg-[#FAF7F2]">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-[#2B2D42] mb-1">Portion / Instructions / Details *</label>
-                    <input type="text" id="itemDetails" required placeholder="e.g. 1 cup kibble + 1 spoon pumpkin puree" class="w-full px-3.5 py-2.5 rounded-xl border border-[#F0E2D8] text-xs font-semibold text-[#2B2D42] focus:outline-none focus:border-[#E76F51] bg-[#FAF7F2]">
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-[#2B2D42] mb-1">Frequency / Days</label>
-                        <select id="itemFrequency" class="w-full px-3.5 py-2.5 rounded-xl border border-[#F0E2D8] text-xs font-semibold text-[#2B2D42] focus:outline-none focus:border-[#E76F51] bg-[#FAF7F2]">
-                            <option value="Daily">Daily</option>
-                            <option value="Weekdays">Weekdays (Mon-Fri)</option>
-                            <option value="Weekends">Weekends</option>
-                            <option value="Once">One-time Task</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-[#2B2D42] mb-1">Initial Status</label>
-                        <select id="itemStatus" class="w-full px-3.5 py-2.5 rounded-xl border border-[#F0E2D8] text-xs font-semibold text-[#2B2D42] focus:outline-none focus:border-[#E76F51] bg-[#FAF7F2]">
-                            <option value="Scheduled">Scheduled Today</option>
-                            <option value="Next">Next Up</option>
-                            <option value="Completed">Completed</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Modal Buttons -->
-                <div class="flex items-center justify-end gap-3 pt-3 border-t border-[#F0E2D8]">
-                    <button type="button" onclick="toggleModal(false)" class="px-4 py-2.5 rounded-xl text-xs font-bold text-[#6C757D] hover:bg-gray-100 transition">
-                        Cancel
-                    </button>
-                    <button type="submit" class="bg-[#E76F51] hover:bg-[#D85F42] active:scale-95 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition shadow-xs flex items-center gap-2">
-                        <i class="fa-solid fa-check text-xs"></i>
-                        <span>Save Schedule</span>
-                    </button>
-                </div>
-            </form>
+    <!-- Sidebar (Matching the structure from screenshots) -->
+    <aside class="sidebar">
+        <div class="logo-area">
+            <i class="fa-solid fa-paw"></i> PetCare
         </div>
-    </div>
+        <ul class="nav-menu">
+            <li><a href="#" class="nav-item"><i class="fa-solid fa-grid-2"></i> Dashboard</a></li>
+            <li><a href="#" class="nav-item"><i class="fa-solid fa-dog"></i> Dog Profile</a></li>
+            <li><a href="#" class="nav-item active"><i class="fa-solid fa-syringe"></i> Vaccinations</a></li>
+            <li><a href="#" class="nav-item"><i class="fa-solid fa-calendar-check"></i> Appointments</a></li>
+            <li><a href="#" class="nav-item"><i class="fa-solid fa-file-medical"></i> Medical Records</a></li>
+            <li><a href="#" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a></li>
+        </ul>
+    </aside>
 
-    <script>
-        let totalCount = 5;
+    <!-- Main Content Area -->
+    <main class="main-content">
+        
+        <!-- Page Header -->
+        <header class="page-header">
+            <h1 class="page-title">Vaccination Records (Buddy)</h1>
+            <button class="btn-primary">
+                <i class="fa-solid fa-plus"></i> Add Vaccination
+            </button>
+        </header>
 
-        // Toggle Modal Visibility
-        function toggleModal(show) {
-            const modal = document.getElementById('addModal');
-            if (show) {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            } else {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-                document.getElementById('scheduleForm').reset();
-            }
-        }
-
-        // Filter functionality
-        function filterCategory(category) {
-            const items = document.querySelectorAll('.schedule-item');
-            const tabs = document.querySelectorAll('.tab-btn');
-
-            tabs.forEach(tab => {
-                tab.classList.remove('bg-[#E76F51]', 'text-white');
-                tab.classList.add('bg-white', 'text-[#6C757D]', 'border', 'border-[#F0E2D8]');
-            });
-
-            event.currentTarget.classList.remove('bg-white', 'text-[#6C757D]', 'border', 'border-[#F0E2D8]');
-            event.currentTarget.classList.add('bg-[#E76F51]', 'text-white');
-
-            items.forEach(item => {
-                if (category === 'All' || item.dataset.category === category) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-
-        // Handle Schedule Creation
-        function handleFormSubmit(event) {
-            event.preventDefault();
-
-            const title = document.getElementById('itemTitle').value;
-            const category = document.getElementById('itemCategory').value;
-            const time = document.getElementById('itemTime').value;
-            const details = document.getElementById('itemDetails').value;
-            const status = document.getElementById('itemStatus').value;
-
-            // Configure visual attributes based on category and status
-            let bgClass = 'bg-[#FEFCE8] border-[#FDE68A]';
-            let iconBg = 'bg-[#F59E0B]';
-            let iconHtml = '<i class="fa-solid fa-clock text-lg"></i>';
-            let statusBadge = `<span class="bg-[#FEF3C7] text-[#92400E] font-bold text-xs px-3.5 py-1.5 rounded-full tracking-wide flex items-center gap-1.5 shrink-0"><i class="fa-regular fa-clock text-[10px]"></i><span>Scheduled Today</span></span>`;
-            let textColor = 'text-[#713F12]';
-            let subColor = 'text-[#A16207]';
-
-            if (category === 'Feeding') {
-                iconBg = 'bg-[#10B981]';
-                iconHtml = `<svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M2 16c0 2.2 3.6 4 10 4s10-1.8 10-4v-3H2v3zm19.8-5.3C21.9 8.2 17.5 6 12 6S2.1 8.2 2.2 10.7c0 .1.1.2.1.3h19.4c0-.1.1-.2.1-.3zM12 2C9.2 2 7 4.2 7 7h10c0-2.8-2.2-5-5-5z"/></svg>`;
-            } else if (category === 'Walk') {
-                iconBg = 'bg-[#3B82F6]';
-                iconHtml = `<i class="fa-solid fa-person-walking text-lg"></i>`;
-            } else if (category === 'Training') {
-                iconBg = 'bg-[#8B5CF6]';
-                iconHtml = `<i class="fa-solid fa-award text-lg"></i>`;
-            }
-
-            if (status === 'Completed') {
-                bgClass = 'bg-[#F0FDF4] border-[#A7F3D0]';
-                textColor = 'text-[#064E3B]';
-                subColor = 'text-[#047857]';
-                statusBadge = `<span class="bg-[#D1FAE5] text-[#065F46] font-bold text-xs px-3.5 py-1.5 rounded-full tracking-wide flex items-center gap-1.5 shrink-0"><i class="fa-solid fa-circle-check text-[10px]"></i><span>Completed</span></span>`;
-            } else if (status === 'Next') {
-                bgClass = 'bg-[#F0F9FF] border-[#BAE6FD]';
-                textColor = 'text-[#0C4A6E]';
-                subColor = 'text-[#0369A1]';
-                statusBadge = `<span class="bg-[#E0F2FE] text-[#0369A1] font-bold text-xs px-3.5 py-1.5 rounded-full tracking-wide flex items-center gap-1.5 shrink-0"><i class="fa-solid fa-person-running text-[10px]"></i><span>Next Up</span></span>`;
-            }
-
-            // Create Card Markup
-            const newCard = document.createElement('div');
-            newCard.className = `schedule-item ${bgClass} border rounded-2xl p-4 flex items-center justify-between transition hover:shadow-xs`;
-            newCard.setAttribute('data-category', category);
-            newCard.innerHTML = `
-                <div class="flex items-center gap-4">
-                    <div class="w-11 h-11 rounded-2xl ${iconBg} flex items-center justify-center text-white shrink-0 shadow-xs">
-                        ${iconHtml}
-                    </div>
-                    <div>
-                        <h2 class="font-extrabold text-[15px] ${textColor} leading-tight">${title}</h2>
-                        <p class="text-xs font-semibold ${subColor} mt-1">${time} • ${details}</p>
-                    </div>
+        <!-- Main Card -->
+        <div class="records-container">
+            
+            <!-- Section Header with Filters -->
+            <div class="section-header">
+                <h2 class="section-title">Vaccination Records (Buddy)</h2>
+                <div class="filter-tabs">
+                    <button class="filter-tab active">All</button>
+                    <button class="filter-tab inactive">Completed</button>
+                    <button class="filter-tab inactive">Upcoming</button>
                 </div>
-                ${statusBadge}
-            `;
+            </div>
 
-            // Append Card
-            const container = document.getElementById('scheduleContainer');
-            container.prepend(newCard);
+            <!-- List of Records -->
+            <div class="record-list">
+                
+                <!-- Record 1: Completed -->
+                <div class="record-item completed">
+                    <div class="record-info">
+                        <div class="icon-circle">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <div class="details">
+                            <h4>Rabies Vaccine</h4>
+                            <p>Administered on Jan 15, 2024 • Next due: Jan 15, 2025</p>
+                        </div>
+                    </div>
+                    <span class="status-badge completed">Completed</span>
+                </div>
 
-            // Update Counts
-            totalCount++;
-            document.getElementById('countAll').innerText = totalCount;
-            document.getElementById('footerCount').innerText = `${totalCount} Total Tasks Scheduled`;
+                <!-- Record 2: Completed -->
+                <div class="record-item completed">
+                    <div class="record-info">
+                        <div class="icon-circle">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <div class="details">
+                            <h4>DHPP (Distemper, Hepatitis, Parvovirus, Parainfluenza)</h4>
+                            <p>Administered on Feb 10, 2024 • Next due: Feb 10, 2025</p>
+                        </div>
+                    </div>
+                    <span class="status-badge completed">Completed</span>
+                </div>
 
-            // Close Modal
-            toggleModal(false);
-        }
-    </script>
+                <!-- Record 3: Upcoming -->
+                <div class="record-item upcoming">
+                    <div class="record-info">
+                        <div class="icon-circle">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                        <div class="details">
+                            <h4>Bordetella (Kennel Cough)</h4>
+                            <p>Scheduled for Mar 05, 2024 • Due in 12 days</p>
+                        </div>
+                    </div>
+                    <span class="status-badge upcoming">Upcoming</span>
+                </div>
+
+                <!-- Record 4: Overdue -->
+                <div class="record-item overdue">
+                    <div class="record-info">
+                        <div class="icon-circle">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <div class="details">
+                            <h4>Leptospirosis</h4>
+                            <p>Was due on Feb 01, 2024 • Overdue by 5 days</p>
+                        </div>
+                    </div>
+                    <span class="status-badge overdue">Overdue</span>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
 </body>
 </html>
