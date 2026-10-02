@@ -3,423 +3,863 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vaccination Records - Pet Dashboard</title>
-    <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome for Icons -->
+    <title>PawFolio - Schedules & Reminders</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
+    <!-- Tailwind Custom Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            bg: '#FAF7F2',
+                            card: '#FFFFFF',
+                            primary: '#EE6B47',
+                            primaryHover: '#D95A37',
+                            primaryLight: '#FFF1ED',
+                            textDark: '#1E293B',
+                            textMuted: '#64748B',
+                            textLight: '#94A3B8',
+                            border: '#F1F5F9',
+                            sidebar: '#FFFFFF'
+                        },
+                        status: {
+                            greenBg: '#E6F4EA',
+                            greenText: '#1E8E3E',
+                            yellowBg: '#FEF7E0',
+                            yellowText: '#B58100',
+                            redBg: '#FCE8E6',
+                            redText: '#C5221F',
+                            blueBg: '#E8F0FE',
+                            blueText: '#1A73E8',
+                            purpleBg: '#F3E8FF',
+                            purpleText: '#7E22CE'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.02)',
+                        'modal': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        :root {
-            --primary-orange: #E86A46;
-            --primary-orange-hover: #d65a36;
-            --bg-body: #F8F9FB;
-            --bg-sidebar: #FFFFFF;
-            --bg-card: #FFFFFF;
-            --text-dark: #1F2937;
-            --text-gray: #6B7280;
-            --text-light-gray: #9CA3AF;
-            --border-color: #F3F4F6;
-            
-            /* Status Colors */
-            --status-green-bg: #D1FAE5;
-            --status-green-text: #065F46;
-            --status-yellow-bg: #FEF3C7;
-            --status-yellow-text: #92400E;
-            --status-red-bg: #FEE2E2;
-            --status-red-text: #991B1B;
-
-            /* Sidebar Dimensions */
-            --sidebar-width: 260px;
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
+        ::-webkit-scrollbar-track {
+            background: #FAF7F2;
         }
-
-        body {
-            background-color: var(--bg-body);
-            color: var(--text-dark);
-            display: flex;
-            min-height: 100vh;
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 9999px;
         }
-
-        /* --- Sidebar Styling --- */
-        .sidebar {
-            width: var(--sidebar-width);
-            background-color: var(--bg-sidebar);
-            border-right: 1px solid var(--border-color);
-            padding: 24px;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
         }
-
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            font-size: 18px;
-            color: var(--primary-orange);
-            margin-bottom: 20px;
-        }
-
-        .nav-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            list-style: none;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            border-radius: 12px;
-            color: var(--text-gray);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .nav-item i {
-            width: 20px;
-            text-align: center;
-            font-size: 16px;
-        }
-
-        .nav-item:hover {
-            background-color: #FFF7F5;
-            color: var(--primary-orange);
-        }
-
-        .nav-item.active {
-            background-color: #FFF0EC; /* Light orange background */
-            color: var(--primary-orange);
-            font-weight: 600;
-        }
-
-        /* --- Main Content Styling --- */
-        .main-content {
-            margin-left: var(--sidebar-width);
-            flex: 1;
-            padding: 40px;
-            max-width: 1400px;
-        }
-
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .page-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .btn-primary {
-            background-color: var(--primary-orange);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-orange-hover);
-        }
-
-        /* --- Records Container --- */
-        .records-container {
-            background-color: var(--bg-card);
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .section-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        /* Filter Tabs */
-        .filter-tabs {
-            display: flex;
-            gap: 10px;
-        }
-
-        .filter-tab {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s;
-        }
-
-        .filter-tab.active {
-            background-color: var(--primary-orange);
-            color: white;
-        }
-
-        .filter-tab.inactive {
-            background-color: #FFF0EC;
-            color: var(--primary-orange);
-        }
-
-        .filter-tab.inactive:hover {
-            background-color: #ffe4dc;
-        }
-
-        /* --- Record List --- */
-        .record-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .record-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 24px;
-            border-radius: 12px;
-            transition: transform 0.2s;
-        }
-
-        .record-item:hover {
-            transform: translateX(4px);
-        }
-
-        /* Status Background Variants */
-        .record-item.completed {
-            background-color: #F0FDF4; /* Very light green */
-            border-left: 4px solid #22C55E;
-        }
-
-        .record-item.upcoming {
-            background-color: #FFFBEB; /* Very light yellow */
-            border-left: 4px solid #F59E0B;
-        }
-
-        .record-item.overdue {
-            background-color: #FEF2F2; /* Very light red */
-            border-left: 4px solid #EF4444;
-        }
-
-        .record-info {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .icon-circle {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-        }
-
-        .completed .icon-circle {
-            background-color: #DCFCE7;
-            color: #16A34A;
-        }
-
-        .upcoming .icon-circle {
-            background-color: #FEF3C7;
-            color: #D97706;
-        }
-
-        .overdue .icon-circle {
-            background-color: #FEE2E2;
-            color: #DC2626;
-        }
-
-        .details h4 {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 4px;
-        }
-
-        .details p {
-            font-size: 13px;
-            color: var(--text-gray);
-        }
-
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-badge.completed {
-            background-color: var(--status-green-bg);
-            color: var(--status-green-text);
-        }
-
-        .status-badge.upcoming {
-            background-color: var(--status-yellow-bg);
-            color: var(--status-yellow-text);
-        }
-
-        .status-badge.overdue {
-            background-color: var(--status-red-bg);
-            color: var(--status-red-text);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                display: none; /* Hidden on mobile for simplicity */
-            }
-            .main-content {
-                margin-left: 0;
-                padding: 20px;
-            }
-            .record-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
+        .modal-blur {
+            backdrop-filter: blur(4px);
         }
     </style>
 </head>
-<body>
+<body class="bg-brand-bg text-brand-textDark font-sans antialiased min-h-screen flex flex-col md:flex-row overflow-x-hidden">
 
-    <!-- Sidebar (Matching the structure from screenshots) -->
-    <aside class="sidebar">
-        <div class="logo-area">
-            <i class="fa-solid fa-paw"></i> PetCare
+    <!-- Mobile Header -->
+    <div class="md:hidden flex items-center justify-between p-4 bg-white border-b border-gray-100 sticky top-0 z-30">
+        <div class="flex items-center space-x-2">
+            <div class="w-9 h-9 rounded-full bg-brand-primary flex items-center justify-center text-white text-lg">
+                <i class="fa-solid font-bold fa-paw"></i>
+            </div>
+            <span class="font-heading font-bold text-xl tracking-tight text-brand-textDark">paw<span class="text-brand-primary">folio</span></span>
         </div>
-        <ul class="nav-menu">
-            <li><a href="#" class="nav-item"><i class="fa-solid fa-grid-2"></i> Dashboard</a></li>
-            <li><a href="#" class="nav-item"><i class="fa-solid fa-dog"></i> Dog Profile</a></li>
-            <li><a href="#" class="nav-item active"><i class="fa-solid fa-syringe"></i> Vaccinations</a></li>
-            <li><a href="#" class="nav-item"><i class="fa-solid fa-calendar-check"></i> Appointments</a></li>
-            <li><a href="#" class="nav-item"><i class="fa-solid fa-file-medical"></i> Medical Records</a></li>
-            <li><a href="#" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a></li>
-        </ul>
+        <button id="mobileMenuBtn" class="text-brand-textMuted hover:text-brand-primary p-2 focus:outline-none">
+            <i class="fa-solid fa-bars text-xl"></i>
+        </button>
+    </div>
+
+    <!-- Sidebar Overlay for Mobile -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/40 z-40 hidden md:hidden transition-opacity"></div>
+
+    <!-- Left Navigation Sidebar -->
+    <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-50 w-64 bg-brand-sidebar border-r border-gray-100 flex flex-col justify-between transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out shrink-0 h-screen overflow-y-auto">
+        <div class="p-5">
+            <!-- Brand Logo -->
+            <div class="hidden md:flex items-center space-x-2.5 mb-6">
+                <div class="w-10 h-10 rounded-xl bg-brand-primary flex items-center justify-center text-white text-xl shadow-md shadow-brand-primary/20">
+                    <i class="fa-solid fa-paw"></i>
+                </div>
+                <span class="font-heading font-bold text-2xl tracking-tight text-brand-textDark">paw<span class="text-brand-primary">folio</span></span>
+            </div>
+
+            <!-- Active Dog Selector Dropdown -->
+            <div class="mb-6">
+                <label class="block text-[11px] font-bold text-brand-textLight uppercase tracking-wider mb-1.5 px-1">Active Pet</label>
+                <div class="relative">
+                    <button id="dogSelectorBtn" onclick="toggleDogDropdown()" class="w-full flex items-center justify-between p-2.5 bg-brand-bg hover:bg-brand-primaryLight/50 border border-gray-200/80 rounded-xl transition duration-150">
+                        <div class="flex items-center space-x-2.5">
+                            <img id="activeDogAvatar" src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=120" alt="Buster" class="w-8 h-8 rounded-lg object-cover border border-white shadow-sm">
+                            <div class="text-left">
+                                <p id="activeDogName" class="text-xs font-bold text-brand-textDark leading-tight">Buster</p>
+                                <p id="activeDogBreed" class="text-[10px] text-brand-textMuted">Golden Retriever</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-xs text-brand-textMuted"></i>
+                    </button>
+
+                    <!-- Dropdown Options -->
+                    <div id="dogDropdown" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-xl shadow-lg z-50 overflow-hidden py-1">
+                        <button onclick="switchDog('Buster', 'Golden Retriever', 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=120')" class="w-full flex items-center space-x-2.5 px-3 py-2 hover:bg-brand-bg text-left transition">
+                            <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=120" class="w-7 h-7 rounded-lg object-cover">
+                            <div>
+                                <p class="text-xs font-bold text-brand-textDark">Buster</p>
+                                <p class="text-[10px] text-brand-textMuted">Golden Retriever</p>
+                            </div>
+                        </button>
+                        <button onclick="switchDog('Luna', 'French Bulldog', 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&q=80&w=120')" class="w-full flex items-center space-x-2.5 px-3 py-2 hover:bg-brand-bg text-left transition">
+                            <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&q=80&w=120" class="w-7 h-7 rounded-lg object-cover">
+                            <div>
+                                <p class="text-xs font-bold text-brand-textDark">Luna</p>
+                                <p class="text-[10px] text-brand-textMuted">French Bulldog</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="space-y-1">
+                <p class="text-[11px] font-bold text-brand-textLight uppercase tracking-wider mb-2 px-1">Main Menu</p>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2.5 text-xs font-medium text-brand-textMuted rounded-xl hover:bg-brand-bg hover:text-brand-textDark transition">
+                    <i class="fa-solid fa-chart-pie text-sm w-5 text-center"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2.5 text-xs font-medium text-brand-textMuted rounded-xl hover:bg-brand-bg hover:text-brand-textDark transition">
+                    <i class="fa-solid fa-id-card text-sm w-5 text-center"></i>
+                    <span>Dog Profile</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2.5 text-xs font-medium text-brand-textMuted rounded-xl hover:bg-brand-bg hover:text-brand-textDark transition">
+                    <i class="fa-solid fa-syringe text-sm w-5 text-center"></i>
+                    <span>Vaccinations</span>
+                </a>
+                <!-- Active Item -->
+                <a href="#" class="flex items-center space-x-3 px-3 py-2.5 text-xs font-bold text-brand-primary bg-brand-primaryLight rounded-xl transition">
+                    <i class="fa-solid fa-calendar-check text-sm w-5 text-center text-brand-primary"></i>
+                    <span>Schedules & Reminders</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2.5 text-xs font-medium text-brand-textMuted rounded-xl hover:bg-brand-bg hover:text-brand-textDark transition">
+                    <i class="fa-solid fa-notes-medical text-sm w-5 text-center"></i>
+                    <span>Medical History</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2.5 text-xs font-medium text-brand-textMuted rounded-xl hover:bg-brand-bg hover:text-brand-textDark transition">
+                    <i class="fa-solid fa-weight-scale text-sm w-5 text-center"></i>
+                    <span>Weight Tracker</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2.5 text-xs font-medium text-brand-textMuted rounded-xl hover:bg-brand-bg hover:text-brand-textDark transition">
+                    <i class="fa-solid fa-truck-medical text-sm w-5 text-center"></i>
+                    <span>Emergency Care</span>
+                </a>
+
+                <p class="text-[11px] font-bold text-brand-textLight uppercase tracking-wider pt-5 mb-2 px-1">My Account</p>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2.5 text-xs font-medium text-brand-textMuted rounded-xl hover:bg-brand-bg hover:text-brand-textDark transition">
+                    <i class="fa-solid fa-gear text-sm w-5 text-center"></i>
+                    <span>Settings</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2.5 text-xs font-medium text-brand-textMuted rounded-xl hover:bg-brand-bg hover:text-brand-textDark transition">
+                    <i class="fa-solid fa-bell text-sm w-5 text-center"></i>
+                    <span>Notifications</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- User Profile Footer -->
+        <div class="p-4 border-t border-gray-100 bg-gray-50/50">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-full bg-brand-primaryLight text-brand-primary flex items-center justify-center font-bold text-xs">
+                        JS
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-brand-textDark">Jane Smith</p>
+                        <p class="text-[10px] text-brand-textMuted">jane.smith@example.com</p>
+                    </div>
+                </div>
+                <button title="Log out" class="text-brand-textMuted hover:text-brand-primary transition p-1">
+                    <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
+                </button>
+            </div>
+        </div>
     </aside>
 
-    <!-- Main Content Area -->
-    <main class="main-content">
-        
-        <!-- Page Header -->
-        <header class="page-header">
-            <h1 class="page-title">Vaccination Records (Buddy)</h1>
-            <button class="btn-primary">
-                <i class="fa-solid fa-plus"></i> Add Vaccination
-            </button>
-        </header>
+    <!-- Main Content Body -->
+    <main class="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full overflow-y-auto">
 
-        <!-- Main Card -->
-        <div class="records-container">
-            
-            <!-- Section Header with Filters -->
-            <div class="section-header">
-                <h2 class="section-title">Vaccination Records (Buddy)</h2>
-                <div class="filter-tabs">
-                    <button class="filter-tab active">All</button>
-                    <button class="filter-tab inactive">Completed</button>
-                    <button class="filter-tab inactive">Upcoming</button>
+        <!-- Top Header & Action Row -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <div>
+                <div class="flex items-center space-x-2 text-xs font-bold text-brand-primary uppercase tracking-wider mb-1">
+                    <span>Schedules & Reminders</span>
+                    <span class="text-gray-300">•</span>
+                    <span id="activeDogHeaderName" class="text-brand-textMuted capitalize">Buster</span>
+                </div>
+                <h1 class="text-2xl md:text-3xl font-heading font-extrabold text-brand-textDark tracking-tight">
+                    Dog Schedules & Reminders (<span id="headerDogSpan" class="text-brand-primary">Buster</span>)
+                </h1>
+            </div>
+
+            <!-- Add Schedule Primary Button -->
+            <button onclick="openAddModal()" class="inline-flex items-center justify-center space-x-2 bg-brand-primary hover:bg-brand-primaryHover text-white font-semibold text-xs md:text-sm px-5 py-3 rounded-xl shadow-lg shadow-brand-primary/20 transition transform active:scale-95 cursor-pointer">
+                <i class="fa-solid fa-plus text-xs"></i>
+                <span>Add New Schedule / Reminder</span>
+            </button>
+        </div>
+
+        <!-- Overview Stat Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <!-- Card 1 -->
+            <div class="bg-white rounded-2xl p-4 shadow-soft border border-gray-100 flex items-center space-x-3.5">
+                <div class="w-11 h-11 rounded-xl bg-brand-primaryLight text-brand-primary flex items-center justify-center text-lg shrink-0">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                </div>
+                <div>
+                    <p class="text-[11px] font-semibold text-brand-textMuted uppercase tracking-wider">Upcoming Tasks</p>
+                    <p id="statUpcoming" class="text-xl font-extrabold text-brand-textDark mt-0.5">3 Tasks</p>
+                    <span class="inline-block text-[10px] font-bold text-status-greenText bg-status-greenBg px-1.5 py-0.5 rounded-full mt-1">Due soon</span>
                 </div>
             </div>
 
-            <!-- List of Records -->
-            <div class="record-list">
-                
-                <!-- Record 1: Completed -->
-                <div class="record-item completed">
-                    <div class="record-info">
-                        <div class="icon-circle">
-                            <i class="fa-solid fa-check"></i>
-                        </div>
-                        <div class="details">
-                            <h4>Rabies Vaccine</h4>
-                            <p>Administered on Jan 15, 2024 • Next due: Jan 15, 2025</p>
-                        </div>
-                    </div>
-                    <span class="status-badge completed">Completed</span>
+            <!-- Card 2 -->
+            <div class="bg-white rounded-2xl p-4 shadow-soft border border-gray-100 flex items-center space-x-3.5">
+                <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg shrink-0">
+                    <i class="fa-solid fa-circle-check"></i>
                 </div>
-
-                <!-- Record 2: Completed -->
-                <div class="record-item completed">
-                    <div class="record-info">
-                        <div class="icon-circle">
-                            <i class="fa-solid fa-check"></i>
-                        </div>
-                        <div class="details">
-                            <h4>DHPP (Distemper, Hepatitis, Parvovirus, Parainfluenza)</h4>
-                            <p>Administered on Feb 10, 2024 • Next due: Feb 10, 2025</p>
-                        </div>
-                    </div>
-                    <span class="status-badge completed">Completed</span>
+                <div>
+                    <p class="text-[11px] font-semibold text-brand-textMuted uppercase tracking-wider">Today's Routine</p>
+                    <p id="statRoutine" class="text-xl font-extrabold text-brand-textDark mt-0.5">2/3 Done</p>
+                    <span class="inline-block text-[10px] font-bold text-status-blueText bg-status-blueBg px-1.5 py-0.5 rounded-full mt-1">66% Completed</span>
                 </div>
+            </div>
 
-                <!-- Record 3: Upcoming -->
-                <div class="record-item upcoming">
-                    <div class="record-info">
-                        <div class="icon-circle">
-                            <i class="fa-solid fa-clock"></i>
-                        </div>
-                        <div class="details">
-                            <h4>Bordetella (Kennel Cough)</h4>
-                            <p>Scheduled for Mar 05, 2024 • Due in 12 days</p>
-                        </div>
-                    </div>
-                    <span class="status-badge upcoming">Upcoming</span>
+            <!-- Card 3 -->
+            <div class="bg-white rounded-2xl p-4 shadow-soft border border-gray-100 flex items-center space-x-3.5">
+                <div class="w-11 h-11 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg shrink-0">
+                    <i class="fa-solid fa-user-doctor"></i>
                 </div>
-
-                <!-- Record 4: Overdue -->
-                <div class="record-item overdue">
-                    <div class="record-info">
-                        <div class="icon-circle">
-                            <i class="fa-solid fa-triangle-exclamation"></i>
-                        </div>
-                        <div class="details">
-                            <h4>Leptospirosis</h4>
-                            <p>Was due on Feb 01, 2024 • Overdue by 5 days</p>
-                        </div>
-                    </div>
-                    <span class="status-badge overdue">Overdue</span>
+                <div>
+                    <p class="text-[11px] font-semibold text-brand-textMuted uppercase tracking-wider">Next Vet Visit</p>
+                    <p id="statNextVet" class="text-xl font-extrabold text-brand-textDark mt-0.5">In 5 Days</p>
+                    <span class="inline-block text-[10px] font-bold text-purple-700 bg-purple-100 px-1.5 py-0.5 rounded-full mt-1">Oct 12, 2026</span>
                 </div>
+            </div>
 
+            <!-- Card 4 -->
+            <div class="bg-white rounded-2xl p-4 shadow-soft border border-gray-100 flex items-center space-x-3.5">
+                <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg shrink-0">
+                    <i class="fa-solid fa-pills"></i>
+                </div>
+                <div>
+                    <p class="text-[11px] font-semibold text-brand-textMuted uppercase tracking-wider">Active Meds</p>
+                    <p id="statActiveMeds" class="text-xl font-extrabold text-brand-textDark mt-0.5">1 Medication</p>
+                    <span class="inline-block text-[10px] font-bold text-status-yellowText bg-status-yellowBg px-1.5 py-0.5 rounded-full mt-1">Heartworm Pill</span>
+                </div>
             </div>
         </div>
+
+        <!-- Filter Tabs & Search Bar Container -->
+        <div class="bg-white rounded-2xl p-4 shadow-soft border border-gray-100 mb-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+            
+            <!-- Category Filter Pills -->
+            <div class="flex items-center space-x-1.5 overflow-x-auto pb-2 md:pb-0 scrollbar-none text-xs font-semibold">
+                <button onclick="setFilter('all', this)" class="filter-tab active-tab bg-brand-primary text-white px-3.5 py-2 rounded-xl transition whitespace-nowrap">
+                    All Schedules
+                </button>
+                <button onclick="setFilter('upcoming', this)" class="filter-tab bg-brand-bg text-brand-textMuted hover:bg-gray-100 px-3.5 py-2 rounded-xl transition whitespace-nowrap">
+                    Upcoming
+                </button>
+                <button onclick="setFilter('medication', this)" class="filter-tab bg-brand-bg text-brand-textMuted hover:bg-gray-100 px-3.5 py-2 rounded-xl transition whitespace-nowrap">
+                    Medication
+                </button>
+                <button onclick="setFilter('vet', this)" class="filter-tab bg-brand-bg text-brand-textMuted hover:bg-gray-100 px-3.5 py-2 rounded-xl transition whitespace-nowrap">
+                    Grooming & Vet
+                </button>
+                <button onclick="setFilter('feeding', this)" class="filter-tab bg-brand-bg text-brand-textMuted hover:bg-gray-100 px-3.5 py-2 rounded-xl transition whitespace-nowrap">
+                    Diet & Feeding
+                </button>
+                <button onclick="setFilter('completed', this)" class="filter-tab bg-brand-bg text-brand-textMuted hover:bg-gray-100 px-3.5 py-2 rounded-xl transition whitespace-nowrap">
+                    Completed
+                </button>
+            </div>
+
+            <!-- Search Input Box -->
+            <div class="relative w-full md:w-64">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-textLight text-xs"></i>
+                <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Search reminders..." class="w-full bg-brand-bg text-xs font-medium text-brand-textDark rounded-xl pl-9 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-primary/30 border border-transparent focus:border-brand-primary/20 transition">
+            </div>
+        </div>
+
+        <!-- Schedules Timeline Agenda Cards -->
+        <div class="space-y-3.5" id="scheduleListContainer">
+            <!-- Dynamic Content Will Be Rendered Here -->
+        </div>
+
+        <!-- Empty State Container (Hidden by default) -->
+        <div id="emptyState" class="hidden bg-white rounded-2xl p-12 text-center border border-gray-100 shadow-soft my-6">
+            <div class="w-16 h-16 bg-brand-primaryLight rounded-full flex items-center justify-center mx-auto text-brand-primary text-2xl mb-3">
+                <i class="fa-solid fa-calendar-xmark"></i>
+            </div>
+            <h3 class="text-base font-bold text-brand-textDark">No Reminders Found</h3>
+            <p class="text-xs text-brand-textMuted mt-1 max-w-sm mx-auto">There are no schedule tasks matching your current filter. Try selecting another tab or create a new schedule!</p>
+            <button onclick="openAddModal()" class="mt-4 bg-brand-primary text-white text-xs font-bold px-4 py-2.5 rounded-xl hover:bg-brand-primaryHover transition">
+                + Add Schedule
+            </button>
+        </div>
+
     </main>
 
+    <!-- Add / Edit Schedule Modal -->
+    <div id="scheduleModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 modal-blur hidden opacity-0 transition-opacity duration-200">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 md:p-7 shadow-modal border border-gray-100 transform scale-95 transition-transform duration-200" id="modalContainer">
+            
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between border-b border-gray-100 pb-4 mb-5">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-brand-primaryLight text-brand-primary flex items-center justify-center text-base font-bold">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-heading font-bold text-lg text-brand-textDark" id="modalTitle">New Schedule / Reminder</h3>
+                        <p class="text-xs text-brand-textMuted">Set a routine or health reminder for <span class="modalDogName text-brand-primary font-semibold">Buster</span></p>
+                    </div>
+                </div>
+                <button onclick="closeAddModal()" class="w-8 h-8 rounded-full bg-brand-bg text-brand-textMuted hover:bg-gray-200 hover:text-brand-textDark flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <!-- Modal Form -->
+            <form id="scheduleForm" onsubmit="saveSchedule(event)">
+                <input type="hidden" id="scheduleId">
+
+                <div class="space-y-4 text-xs font-semibold">
+                    <!-- Title Input -->
+                    <div>
+                        <label class="block text-brand-textDark mb-1.5">Schedule Title <span class="text-red-500">*</span></label>
+                        <input type="text" id="formTitle" required placeholder="e.g., Heartworm Pill / Vet Checkup" class="w-full bg-brand-bg text-xs border border-gray-200 rounded-xl px-3.5 py-2.5 text-brand-textDark focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary">
+                    </div>
+
+                    <!-- Category & Frequency Row -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-brand-textDark mb-1.5">Category</label>
+                            <select id="formCategory" class="w-full bg-brand-bg text-xs border border-gray-200 rounded-xl px-3.5 py-2.5 text-brand-textDark focus:outline-none focus:ring-2 focus:ring-brand-primary/30">
+                                <option value="medication">Medication</option>
+                                <option value="vet">Grooming & Vet</option>
+                                <option value="feeding">Diet & Feeding</option>
+                                <option value="exercise">Exercise & Walk</option>
+                                <option value="custom">Custom Reminder</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-brand-textDark mb-1.5">Repeat Frequency</label>
+                            <select id="formFrequency" class="w-full bg-brand-bg text-xs border border-gray-200 rounded-xl px-3.5 py-2.5 text-brand-textDark focus:outline-none focus:ring-2 focus:ring-brand-primary/30">
+                                <option value="Once">One-time event</option>
+                                <option value="Daily">Daily</option>
+                                <option value="Weekly">Weekly</option>
+                                <option value="Monthly">Monthly</option>
+                                <option value="Every 3 Months">Every 3 Months</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Date & Time Row -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-brand-textDark mb-1.5">Date <span class="text-red-500">*</span></label>
+                            <input type="date" id="formDate" required class="w-full bg-brand-bg text-xs border border-gray-200 rounded-xl px-3.5 py-2.5 text-brand-textDark focus:outline-none focus:ring-2 focus:ring-brand-primary/30">
+                        </div>
+                        <div>
+                            <label class="block text-brand-textDark mb-1.5">Time <span class="text-red-500">*</span></label>
+                            <input type="time" id="formTime" required class="w-full bg-brand-bg text-xs border border-gray-200 rounded-xl px-3.5 py-2.5 text-brand-textDark focus:outline-none focus:ring-2 focus:ring-brand-primary/30">
+                        </div>
+                    </div>
+
+                    <!-- Reminder Alert Lead Time -->
+                    <div>
+                        <label class="block text-brand-textDark mb-1.5">Notification Alert Lead Time</label>
+                        <select id="formAlert" class="w-full bg-brand-bg text-xs border border-gray-200 rounded-xl px-3.5 py-2.5 text-brand-textDark focus:outline-none focus:ring-2 focus:ring-brand-primary/30">
+                            <option value="At time of event">At time of event</option>
+                            <option value="15 minutes before">15 minutes before</option>
+                            <option value="1 hour before">1 hour before</option>
+                            <option value="1 day before">1 day before</option>
+                            <option value="3 days before">3 days before</option>
+                        </select>
+                    </div>
+
+                    <!-- Instructions / Notes -->
+                    <div>
+                        <label class="block text-brand-textDark mb-1.5">Notes / Dosage Instructions</label>
+                        <textarea id="formNotes" rows="2" placeholder="e.g., Give 1 tablet with breakfast, avoid empty stomach..." class="w-full bg-brand-bg text-xs border border-gray-200 rounded-xl px-3.5 py-2.5 text-brand-textDark focus:outline-none focus:ring-2 focus:ring-brand-primary/30 resize-none"></textarea>
+                    </div>
+                </div>
+
+                <!-- Form Action Buttons -->
+                <div class="flex items-center justify-end space-x-3 mt-6 pt-4 border-t border-gray-100">
+                    <button type="button" onclick="closeAddModal()" class="px-4 py-2.5 text-xs font-bold text-brand-textMuted bg-brand-bg hover:bg-gray-200 rounded-xl transition">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-5 py-2.5 text-xs font-bold text-white bg-brand-primary hover:bg-brand-primaryHover rounded-xl shadow-md shadow-brand-primary/20 transition">
+                        Save Reminder
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Data State Store for Pets
+        let activeDog = 'Buster';
+        let currentFilter = 'all';
+
+        // Sample Pre-populated Schedule Data
+        let schedules = [
+            {
+                id: '1',
+                dog: 'Buster',
+                title: 'Heartworm Prevention Chewable (NexGard Spec)',
+                category: 'medication',
+                date: '2026-10-02',
+                time: '08:00',
+                frequency: 'Monthly',
+                notes: 'Give 1 chewable tablet after morning meal.',
+                status: 'due', // status: 'due', 'upcoming', 'overdue', 'completed'
+                alert: 'At time of event'
+            },
+            {
+                id: '2',
+                dog: 'Buster',
+                title: 'Annual Health Check & Vaccine Booster',
+                category: 'vet',
+                date: '2026-10-07',
+                time: '14:30',
+                frequency: 'Once',
+                notes: 'Appointment with Dr. Martinez at Paws Health Clinic. Bring vaccination book.',
+                status: 'upcoming',
+                alert: '1 day before'
+            },
+            {
+                id: '3',
+                dog: 'Buster',
+                title: 'Morning High-Protein Feeding Routine',
+                category: 'feeding',
+                date: '2026-10-02',
+                time: '07:30',
+                frequency: 'Daily',
+                notes: '1.5 Cups Salmon Kibble + 1 Spoon Joint Supplement Powder.',
+                status: 'completed',
+                alert: 'At time of event'
+            },
+            {
+                id: '4',
+                dog: 'Buster',
+                title: 'Full Grooming & Bath Session',
+                category: 'vet',
+                date: '2026-09-28',
+                time: '11:00',
+                frequency: 'Every 3 Months',
+                notes: 'Nail trim, fur deshedding, and ear hygiene check.',
+                status: 'overdue',
+                alert: '1 day before'
+            },
+            {
+                id: '5',
+                dog: 'Buster',
+                title: 'Evening Park Walk & Agility Exercise',
+                category: 'exercise',
+                date: '2026-10-02',
+                time: '17:30',
+                frequency: 'Daily',
+                notes: '30 mins fetch and walk around Central Dog Park.',
+                status: 'upcoming',
+                alert: '15 minutes before'
+            },
+            {
+                id: '6',
+                dog: 'Luna',
+                title: 'Rabies Booster Vaccine Shot',
+                category: 'vet',
+                date: '2026-10-10',
+                time: '10:00',
+                frequency: 'Once',
+                notes: 'Luna vet appointment for Rabies & DHPP booster.',
+                status: 'upcoming',
+                alert: '3 days before'
+            }
+        ];
+
+        // Initialize Page Engine
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSchedules();
+            setupMobileMenu();
+            
+            // Set default date input in modal to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('formDate').value = today;
+            document.getElementById('formTime').value = '09:00';
+        });
+
+        // Toggle Mobile Sidebar Menu
+        function setupMobileMenu() {
+            const mobileBtn = document.getElementById('mobileMenuBtn');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            function toggleMenu() {
+                sidebar.classList.toggle('-translate-x-full');
+                overlay.classList.toggle('hidden');
+            }
+
+            mobileBtn.addEventListener('click', toggleMenu);
+            overlay.addEventListener('click', toggleMenu);
+        }
+
+        // Toggle Dog Switcher Dropdown
+        function toggleDogDropdown() {
+            const dropdown = document.getElementById('dogDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Switch Active Pet Context
+        function switchDog(name, breed, avatarUrl) {
+            activeDog = name;
+            document.getElementById('activeDogName').innerText = name;
+            document.getElementById('activeDogBreed').innerText = breed;
+            document.getElementById('activeDogAvatar').src = avatarUrl;
+            document.getElementById('headerDogSpan').innerText = name;
+            document.getElementById('activeDogHeaderName').innerText = name;
+            
+            // Update labels in modals
+            document.querySelectorAll('.modalDogName').forEach(el => el.innerText = name);
+
+            // Close Dropdown and Rerender List
+            document.getElementById('dogDropdown').classList.add('hidden');
+            renderSchedules();
+        }
+
+        // Filter Selection Handler
+        function setFilter(filter, element) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('bg-brand-primary', 'text-white');
+                tab.classList.add('bg-brand-bg', 'text-brand-textMuted');
+            });
+
+            element.classList.remove('bg-brand-bg', 'text-brand-textMuted');
+            element.classList.add('bg-brand-primary', 'text-white');
+
+            renderSchedules();
+        }
+
+        // Search Input Filter
+        function handleSearch() {
+            renderSchedules();
+        }
+
+        // Render Schedule Cards Dynamically
+        function renderSchedules() {
+            const container = document.getElementById('scheduleListContainer');
+            const emptyState = document.getElementById('emptyState');
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
+
+            // Filter by active dog
+            let filtered = schedules.filter(item => item.dog === activeDog);
+
+            // Filter by Category or Status
+            if (currentFilter === 'upcoming') {
+                filtered = filtered.filter(s => s.status === 'upcoming' || s.status === 'due');
+            } else if (currentFilter === 'completed') {
+                filtered = filtered.filter(s => s.status === 'completed');
+            } else if (currentFilter !== 'all') {
+                filtered = filtered.filter(s => s.category === currentFilter);
+            }
+
+            // Filter by Search Query
+            if (searchQuery) {
+                filtered = filtered.filter(s => 
+                    s.title.toLowerCase().includes(searchQuery) || 
+                    s.notes.toLowerCase().includes(searchQuery)
+                );
+            }
+
+            // Update Header Counter Stats
+            updateStats();
+
+            if (filtered.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            let html = '';
+            filtered.forEach(item => {
+                html += createScheduleCardHTML(item);
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Generate Schedule Card Component
+        function createScheduleCardHTML(item) {
+            // Category Configs (Icons & Theme Styling)
+            const catConfig = {
+                medication: { icon: 'fa-pills', bg: 'bg-amber-50', text: 'text-amber-600', label: 'Medication' },
+                vet: { icon: 'fa-user-doctor', bg: 'bg-purple-50', text: 'text-purple-600', label: 'Grooming & Vet' },
+                feeding: { icon: 'fa-bowl-food', bg: 'bg-emerald-50', text: 'text-emerald-600', label: 'Diet & Feeding' },
+                exercise: { icon: 'fa-dog', bg: 'bg-blue-50', text: 'text-blue-600', label: 'Exercise & Walk' },
+                custom: { icon: 'fa-bell', bg: 'bg-orange-50', text: 'text-orange-600', label: 'Reminder' }
+            }[item.category] || { icon: 'fa-calendar', bg: 'bg-gray-50', text: 'text-gray-600', label: 'General' };
+
+            // Status Pill Configs
+            const statusConfig = {
+                due: { bg: 'bg-status-yellowBg', text: 'text-status-yellowText', label: 'Due Today', icon: 'fa-clock' },
+                upcoming: { bg: 'bg-status-greenBg', text: 'text-status-greenText', label: 'Upcoming', icon: 'fa-calendar-day' },
+                overdue: { bg: 'bg-status-redBg', text: 'text-status-redText', label: 'Overdue', icon: 'fa-triangle-exclamation' },
+                completed: { bg: 'bg-status-blueBg', text: 'text-status-blueText', label: 'Completed', icon: 'fa-circle-check' }
+            }[item.status];
+
+            const isDone = item.status === 'completed';
+
+            return `
+                <div class="bg-white rounded-2xl p-4 md:p-5 shadow-soft border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4 transition hover:border-brand-primary/20 hover:shadow-md ${isDone ? 'opacity-70 bg-gray-50/50' : ''}">
+                    <!-- Left Details Block -->
+                    <div class="flex items-start space-x-3.5">
+                        <!-- Category Circle Badge -->
+                        <div class="w-12 h-12 rounded-2xl ${catConfig.bg} ${catConfig.text} flex items-center justify-center text-xl shrink-0 mt-0.5">
+                            <i class="fa-solid ${catConfig.icon}"></i>
+                        </div>
+
+                        <!-- Schedule Information -->
+                        <div>
+                            <div class="flex flex-wrap items-center gap-2 mb-1">
+                                <h3 class="font-bold text-sm text-brand-textDark ${isDone ? 'line-through text-brand-textMuted' : ''}">${escapeHtml(item.title)}</h3>
+                                <!-- Status Badge Pill -->
+                                <span class="inline-flex items-center space-x-1 text-[10px] font-bold ${statusConfig.bg} ${statusConfig.text} px-2.5 py-0.5 rounded-full">
+                                    <i class="fa-solid ${statusConfig.icon} text-[9px]"></i>
+                                    <span>${statusConfig.label}</span>
+                                </span>
+                            </div>
+
+                            <p class="text-xs text-brand-textMuted leading-relaxed mb-2">${escapeHtml(item.notes)}</p>
+
+                            <!-- Date / Time Meta Badges -->
+                            <div class="flex flex-wrap items-center gap-3 text-[11px] font-medium text-brand-textMuted">
+                                <span class="flex items-center space-x-1 bg-brand-bg px-2.5 py-1 rounded-lg">
+                                    <i class="fa-regular fa-calendar text-brand-primary text-[10px]"></i>
+                                    <span>${formatDate(item.date)}</span>
+                                </span>
+                                <span class="flex items-center space-x-1 bg-brand-bg px-2.5 py-1 rounded-lg">
+                                    <i class="fa-regular fa-clock text-brand-primary text-[10px]"></i>
+                                    <span>${formatTime(item.time)}</span>
+                                </span>
+                                <span class="flex items-center space-x-1 bg-brand-bg px-2.5 py-1 rounded-lg">
+                                    <i class="fa-solid fa-arrows-rotate text-brand-primary text-[10px]"></i>
+                                    <span>${item.frequency}</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Action Controls -->
+                    <div class="flex items-center justify-between md:justify-end space-x-2 pt-3 md:pt-0 border-t md:border-t-0 border-gray-100 shrink-0">
+                        <!-- Toggle Complete Status Button -->
+                        <button onclick="toggleComplete('${item.id}')" class="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition ${isDone ? 'bg-gray-200 text-brand-textDark hover:bg-gray-300' : 'bg-status-greenBg text-status-greenText hover:bg-emerald-200'}">
+                            <i class="fa-solid ${isDone ? 'fa-rotate-left' : 'fa-check'}"></i>
+                            <span>${isDone ? 'Undo' : 'Mark Done'}</span>
+                        </button>
+
+                        <!-- Edit Button -->
+                        <button onclick="editSchedule('${item.id}')" title="Edit Schedule" class="p-2 w-9 h-9 rounded-xl bg-brand-bg text-brand-textMuted hover:text-brand-primary hover:bg-brand-primaryLight transition flex items-center justify-center">
+                            <i class="fa-solid fa-pen-to-square text-xs"></i>
+                        </button>
+
+                        <!-- Delete Button -->
+                        <button onclick="deleteSchedule('${item.id}')" title="Delete Schedule" class="p-2 w-9 h-9 rounded-xl bg-brand-bg text-brand-textMuted hover:text-red-500 hover:bg-red-50 transition flex items-center justify-center">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update Overview Metric Cards
+        function updateStats() {
+            const dogSchedules = schedules.filter(s => s.dog === activeDog);
+            
+            const upcomingCount = dogSchedules.filter(s => s.status === 'upcoming' || s.status === 'due').length;
+            const completedToday = dogSchedules.filter(s => s.status === 'completed').length;
+            const totalToday = dogSchedules.length;
+            const activeMeds = dogSchedules.filter(s => s.category === 'medication' && s.status !== 'completed').length;
+
+            document.getElementById('statUpcoming').innerText = `${upcomingCount} Task${upcomingCount !== 1 ? 's' : ''}`;
+            document.getElementById('statRoutine').innerText = `${completedToday}/${totalToday} Done`;
+            document.getElementById('statActiveMeds').innerText = `${activeMeds} Active`;
+        }
+
+        // Toggle Done Status Engine
+        function toggleComplete(id) {
+            const index = schedules.findIndex(s => s.id === id);
+            if (index !== -1) {
+                if (schedules[index].status === 'completed') {
+                    schedules[index].status = 'upcoming';
+                } else {
+                    schedules[index].status = 'completed';
+                }
+                renderSchedules();
+            }
+        }
+
+        // Delete Schedule Item
+        function deleteSchedule(id) {
+            schedules = schedules.filter(s => s.id !== id);
+            renderSchedules();
+        }
+
+        // Open Add Modal Dialog
+        function openAddModal() {
+            document.getElementById('scheduleId').value = '';
+            document.getElementById('modalTitle').innerText = 'New Schedule / Reminder';
+            document.getElementById('scheduleForm').reset();
+            
+            // Set defaults
+            document.getElementById('formDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('formTime').value = '09:00';
+
+            const modal = document.getElementById('scheduleModal');
+            const container = document.getElementById('modalContainer');
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                container.classList.remove('scale-95');
+                container.classList.add('scale-100');
+            }, 10);
+        }
+
+        // Close Add Modal Dialog
+        function closeAddModal() {
+            const modal = document.getElementById('scheduleModal');
+            const container = document.getElementById('modalContainer');
+            
+            modal.classList.add('opacity-0');
+            container.classList.remove('scale-100');
+            container.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
+        }
+
+        // Edit Existing Schedule
+        function editSchedule(id) {
+            const item = schedules.find(s => s.id === id);
+            if (!item) return;
+
+            document.getElementById('scheduleId').value = item.id;
+            document.getElementById('modalTitle').innerText = 'Edit Schedule / Reminder';
+            document.getElementById('formTitle').value = item.title;
+            document.getElementById('formCategory').value = item.category;
+            document.getElementById('formFrequency').value = item.frequency;
+            document.getElementById('formDate').value = item.date;
+            document.getElementById('formTime').value = item.time;
+            document.getElementById('formAlert').value = item.alert || 'At time of event';
+            document.getElementById('formNotes').value = item.notes;
+
+            openAddModal();
+        }
+
+        // Save Schedule Form Handler
+        function saveSchedule(e) {
+            e.preventDefault();
+
+            const id = document.getElementById('scheduleId').value;
+            const title = document.getElementById('formTitle').value;
+            const category = document.getElementById('formCategory').value;
+            const frequency = document.getElementById('formFrequency').value;
+            const date = document.getElementById('formDate').value;
+            const time = document.getElementById('formTime').value;
+            const alert = document.getElementById('formAlert').value;
+            const notes = document.getElementById('formNotes').value;
+
+            if (id) {
+                // Update Existing
+                const index = schedules.findIndex(s => s.id === id);
+                if (index !== -1) {
+                    schedules[index] = {
+                        ...schedules[index],
+                        title, category, frequency, date, time, alert, notes
+                    };
+                }
+            } else {
+                // Add New
+                const newSchedule = {
+                    id: Date.now().toString(),
+                    dog: activeDog,
+                    title,
+                    category,
+                    date,
+                    time,
+                    frequency,
+                    notes,
+                    status: 'upcoming',
+                    alert
+                };
+                schedules.unshift(newSchedule);
+            }
+
+            closeAddModal();
+            renderSchedules();
+        }
+
+        // Utility: Format Date string (YYYY-MM-DD -> Oct 02, 2026)
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const options = { month: 'short', day: '2-digit', year: 'numeric' };
+            const [year, month, day] = dateStr.split('-');
+            const date = new Date(year, month - 1, day);
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        // Utility: Format Time string (14:30 -> 2:30 PM)
+        function formatTime(timeStr) {
+            if (!timeStr) return '';
+            const [hours, minutes] = timeStr.split(':');
+            let h = parseInt(hours, 10);
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12;
+            h = h ? h : 12; // 0 hour should be 12
+            return `${h}:${minutes} ${ampm}`;
+        }
+
+        // Utility: Sanitize HTML strings
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+    </script>
 </body>
 </html>
