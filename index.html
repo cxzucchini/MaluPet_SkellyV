@@ -3,128 +3,776 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pawfolio - Schedules & Reminders</title>
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-stone-100 p-8 font-sans antialiased text-stone-800">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <div class="max-w-6xl mx-auto bg-stone-50 rounded-3xl shadow-sm flex min-h-[680px] overflow-hidden border border-stone-200">
-    
-    <!-- Sidebar -->
-    <aside class="w-64 bg-white p-6 border-r border-stone-200 flex flex-col justify-between">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              cream: '#FAF7F2',
+              cardBg: '#FAF5EE',
+              sidebarBg: '#FFFFFF',
+              terracotta: '#E07A5F',
+              terracottaHover: '#D0694E',
+              terracottaLight: '#FDF0EC',
+              terracottaBorder: '#F2D3C9',
+              dark: '#231F20',
+              muted: '#7A7571',
+              lightGray: '#F3EFEA',
+              accentGreen: '#52B788',
+              accentYellow: '#E9C46A',
+              accentBlue: '#4EA8DE'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #FAF7F2;
+      color: #231F20;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #FAF7F2;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #E2DCD5;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #C8BFB5;
+    }
+    .modal-backdrop {
+      background-color: rgba(35, 31, 32, 0.4);
+      backdrop-filter: blur(4px);
+    }
+  </style>
+</head>
+<body class="bg-brand-cream text-brand-dark antialiased h-screen flex overflow-hidden">
+
+  <!-- SIDEBAR -->
+  <aside class="w-72 bg-white border-r border-[#EFE8DF] flex flex-col justify-between flex-shrink-0 h-full overflow-y-auto select-none z-10">
+    <div>
+      <!-- Brand Header -->
+      <div class="p-6 pb-5 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-brand-terracottaLight flex items-center justify-center text-brand-terracotta text-xl">
+          <i class="fa-solid fa-paw"></i>
+        </div>
+        <div>
+          <h1 class="text-2xl font-black tracking-tight text-brand-terracotta leading-none">pawfolio</h1>
+          <span class="text-[10px] font-bold tracking-widest text-brand-muted uppercase">CANINE PASSPORT</span>
+        </div>
+      </div>
+
+      <!-- Active Dog Profile Pill -->
+      <div class="px-5 mb-6">
+        <div class="bg-brand-cream border border-[#EDE5DA] rounded-2xl p-3">
+          <div class="text-[10px] font-extrabold text-brand-terracotta tracking-wider uppercase mb-1">ACTIVE DOG PROFILE</div>
+          <div class="relative">
+            <select id="dogSelect" onchange="switchDogProfile(this.value)" class="w-full bg-transparent font-bold text-sm text-brand-dark appearance-none pr-6 cursor-pointer focus:outline-none">
+              <option value="Buster">🐶 Buster (Golden Retriever)</option>
+              <option value="Bella">🐕 Bella (French Bulldog)</option>
+              <option value="Max">🦮 Max (German Shepherd)</option>
+            </select>
+            <i class="fa-solid fa-chevron-down absolute right-0 top-1/2 -translate-y-1/2 text-xs text-brand-muted pointer-events-none"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Navigation Menu -->
+      <nav class="px-3 space-y-1">
+        <a href="#" onclick="setActiveNav('Dashboard')" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-brand-muted hover:text-brand-dark hover:bg-brand-cream transition-colors">
+          <i class="fa-solid fa-chart-pie w-5 text-center text-brand-terracotta"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="#" onclick="setActiveNav('Dog Profile')" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-brand-muted hover:text-brand-dark hover:bg-brand-cream transition-colors">
+          <i class="fa-solid fa-[#E07A5F] fa-id-card w-5 text-center text-brand-terracotta"></i>
+          <span>Dog Profile</span>
+        </a>
+
+        <a href="#" onclick="setActiveNav('My Pets')" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-brand-muted hover:text-brand-dark hover:bg-brand-cream transition-colors">
+          <i class="fa-solid fa-paw w-5 text-center text-brand-terracotta"></i>
+          <span>My Pets</span>
+        </a>
+
+        <a href="#" onclick="setActiveNav('Vaccinations')" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-brand-muted hover:text-brand-dark hover:bg-brand-cream transition-colors">
+          <i class="fa-solid fa-syringe w-5 text-center text-brand-terracotta"></i>
+          <span>Vaccinations</span>
+        </a>
+
+        <!-- Selected Active Item -->
+        <a href="#" onclick="setActiveNav('Schedules & Reminders')" class="nav-item active flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold text-brand-dark bg-brand-terracottaLight text-brand-terracotta transition-colors">
+          <i class="fa-solid fa-calendar-check w-5 text-center text-brand-terracotta"></i>
+          <span>Schedules & Reminders</span>
+        </a>
+
+        <a href="#" onclick="setActiveNav('Medical History')" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-brand-muted hover:text-brand-dark hover:bg-brand-cream transition-colors">
+          <i class="fa-solid fa-notes-medical w-5 text-center text-brand-terracotta"></i>
+          <span>Medical History</span>
+        </a>
+
+        <a href="#" onclick="setActiveNav('Emergency Vault')" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-brand-muted hover:text-brand-dark hover:bg-brand-cream transition-colors">
+          <i class="fa-solid fa-shield-halved w-5 text-center text-brand-terracotta"></i>
+          <span>Emergency Vault</span>
+        </a>
+
+        <!-- Section Splitter -->
+        <div class="pt-6 pb-2 px-4">
+          <div class="text-[10px] font-extrabold text-brand-muted tracking-widest uppercase">INFO & SUPPORT</div>
+        </div>
+
+        <a href="#" onclick="setActiveNav('About Us')" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-brand-muted hover:text-brand-dark hover:bg-brand-cream transition-colors">
+          <i class="fa-solid fa-circle-info w-5 text-center"></i>
+          <span>About Us</span>
+        </a>
+
+        <a href="#" onclick="setActiveNav('Our Services')" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-brand-muted hover:text-brand-dark hover:bg-brand-cream transition-colors">
+          <i class="fa-solid fa-stethoscope w-5 text-center"></i>
+          <span>Our Services</span>
+        </a>
+
+        <a href="#" onclick="setActiveNav('Contact Us')" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-brand-muted hover:text-brand-dark hover:bg-brand-cream transition-colors">
+          <i class="fa-solid fa-envelope w-5 text-center"></i>
+          <span>Contact Us</span>
+        </a>
+
+        <a href="#" onclick="setActiveNav('Help / FAQs')" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-brand-muted hover:text-brand-dark hover:bg-brand-cream transition-colors">
+          <i class="fa-solid fa-circle-question w-5 text-center"></i>
+          <span>Help / FAQs</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- User Profile Badge Bottom -->
+    <div class="p-4 border-t border-[#EFE8DF]">
+      <div class="bg-brand-cream hover:bg-[#F2ECE3] transition-colors rounded-2xl p-3 flex items-center gap-3 cursor-pointer">
+        <div class="w-10 h-10 rounded-full bg-brand-terracotta flex items-center justify-center text-white font-bold">
+          <i class="fa-solid fa-user"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <h4 class="font-bold text-sm text-brand-dark truncate leading-snug">User</h4>
+          <p class="text-xs text-brand-muted font-medium truncate">Verified Parent</p>
+        </div>
+        <i class="fa-solid fa-ellipsis-vertical text-brand-muted text-xs"></i>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="flex-1 flex flex-col h-full overflow-hidden bg-brand-cream">
+    <!-- Top Header Bar -->
+    <header class="px-8 pt-8 pb-4 flex flex-wrap items-center justify-between gap-4 border-b border-[#EBE3D8]">
       <div>
-        <!-- Logo -->
-        <div class="flex items-center gap-3 mb-8">
-          <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white text-xs font-bold">🐾</div>
+        <div class="text-[11px] font-extrabold text-brand-terracotta tracking-wider uppercase mb-1">SCHEDULES & REMINDER</div>
+        <h2 id="pageTitle" class="text-3xl font-extrabold text-brand-dark tracking-tight">Schedules & Reminder (<span id="activeDogName">Buster</span>)</h2>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <!-- Add Reminder Button -->
+        <button onclick="openAddModal()" class="bg-brand-terracotta hover:bg-brand-terracottaHover text-white font-bold px-5 py-2.5 rounded-full text-sm shadow-sm hover:shadow transition-all flex items-center gap-2">
+          <i class="fa-solid fa-plus"></i>
+          <span>Add Reminder</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Content Viewport -->
+    <div class="flex-1 overflow-y-auto px-8 py-6 space-y-6">
+
+      <!-- Overview Metrics Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Metric 1 -->
+        <div class="bg-white p-5 rounded-2xl border border-[#EDE5DA] shadow-sm flex items-center justify-between">
           <div>
-            <h1 class="font-bold text-base text-stone-900 leading-none">pawsfolio</h1>
-            <p class="text-[10px] text-stone-400">Health Record</p>
+            <span class="text-xs font-bold text-brand-muted uppercase tracking-wider">Total Schedules</span>
+            <div id="statTotal" class="text-2xl font-black text-brand-dark mt-1">6</div>
+          </div>
+          <div class="w-11 h-11 rounded-xl bg-orange-50 flex items-center justify-center text-brand-terracotta text-lg">
+            <i class="fa-regular fa-calendar text-brand-terracotta"></i>
           </div>
         </div>
 
-        <!-- Pet Selector -->
-        <div class="bg-stone-100 p-2.5 rounded-xl flex items-center justify-between text-xs font-medium mb-6 cursor-pointer">
-          <span class="text-stone-700">Buster (Golden Retriever)</span>
-          <span class="text-stone-400 text-xs">▼</span>
+        <!-- Metric 2 -->
+        <div class="bg-white p-5 rounded-2xl border border-[#EDE5DA] shadow-sm flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold text-brand-muted uppercase tracking-wider">Due Soon</span>
+            <div id="statDueSoon" class="text-2xl font-black text-amber-600 mt-1">2</div>
+          </div>
+          <div class="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 text-lg">
+            <i class="fa-solid fa-clock"></i>
+          </div>
         </div>
 
-        <!-- Navigation Links -->
-        <nav class="space-y-1 text-xs font-medium">
-          <a href="#" class="flex items-center gap-3 px-3 py-2 text-stone-600 hover:bg-stone-50 rounded-lg">Dashboard</a>
-          <a href="#" class="flex items-center gap-3 px-3 py-2 text-stone-600 hover:bg-stone-50 rounded-lg">Pet Profile</a>
-          <a href="#" class="flex items-center gap-3 px-3 py-2 text-stone-600 hover:bg-stone-50 rounded-lg">My Pets</a>
-          <a href="#" class="flex items-center gap-3 px-3 py-2 text-orange-600 bg-orange-50 font-semibold rounded-lg">Schedule & Reminders</a>
-          <a href="#" class="flex items-center gap-3 px-3 py-2 text-stone-600 hover:bg-stone-50 rounded-lg">Vaccination History</a>
-          <a href="#" class="flex items-center gap-3 px-3 py-2 text-stone-600 hover:bg-stone-50 rounded-lg">Medical Records</a>
-          <a href="#" class="flex items-center gap-3 px-3 py-2 text-stone-600 hover:bg-stone-50 rounded-lg">Vet Appointments</a>
-        </nav>
+        <!-- Metric 3 -->
+        <div class="bg-white p-5 rounded-2xl border border-[#EDE5DA] shadow-sm flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold text-brand-muted uppercase tracking-wider">Completed</span>
+            <div id="statCompleted" class="text-2xl font-black text-emerald-600 mt-1">1</div>
+          </div>
+          <div class="w-11 h-11 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 text-lg">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+        </div>
+
+        <!-- Metric 4 -->
+        <div class="bg-white p-5 rounded-2xl border border-[#EDE5DA] shadow-sm flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold text-brand-muted uppercase tracking-wider">Next Vet Visit</span>
+            <div class="text-sm font-extrabold text-brand-dark mt-1">Oct 12, 2026</div>
+          </div>
+          <div class="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 text-lg">
+            <i class="fa-solid fa-user-doctor"></i>
+          </div>
+        </div>
       </div>
 
-      <!-- Bottom Nav / Profile -->
-      <div class="space-y-1 border-t border-stone-100 pt-4 text-xs font-medium text-stone-500">
-        <a href="#" class="block px-3 py-1.5 hover:text-stone-800">About Us</a>
-        <a href="#" class="block px-3 py-1.5 hover:text-stone-800">Vet Locator</a>
-        <a href="#" class="block px-3 py-1.5 hover:text-stone-800">Contact Us</a>
-        <a href="#" class="block px-3 py-1.5 hover:text-stone-800">Help Center</a>
-      </div>
-    </aside>
+      <!-- Filter Controls & View Switcher -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-[#EDE5DA]">
+        <!-- Category Filters -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+          <button onclick="filterCategory('All')" class="filter-tab active px-4 py-2 rounded-xl text-xs font-bold transition-all bg-brand-terracotta text-white">All Tasks</button>
+          <button onclick="filterCategory('Vaccination')" class="filter-tab px-4 py-2 rounded-xl text-xs font-bold text-brand-muted hover:bg-brand-cream transition-all">💉 Vaccinations</button>
+          <button onclick="filterCategory('Medication')" class="filter-tab px-4 py-2 rounded-xl text-xs font-bold text-brand-muted hover:bg-brand-cream transition-all">💊 Medications</button>
+          <button onclick="filterCategory('Grooming')" class="filter-tab px-4 py-2 rounded-xl text-xs font-bold text-brand-muted hover:bg-brand-cream transition-all">✂️ Grooming</button>
+          <button onclick="filterCategory('Vet Visit')" class="filter-tab px-4 py-2 rounded-xl text-xs font-bold text-brand-muted hover:bg-brand-cream transition-all">🏥 Vet Visits</button>
+        </div>
 
-    <!-- Main Content Area -->
-    <main class="flex-1 p-8">
-      
-      <!-- Top Title Bar -->
-      <div class="flex items-center justify-between mb-6">
+        <!-- Search and View Toggle -->
+        <div class="flex items-center gap-3">
+          <div class="relative flex-1 md:w-64">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs text-brand-muted"></i>
+            <input type="text" id="searchInput" oninput="renderReminders()" placeholder="Search reminder..." class="w-full bg-brand-cream pl-9 pr-3 py-2 rounded-xl text-xs font-semibold focus:outline-none border border-transparent focus:border-brand-terracotta">
+          </div>
+
+          <div class="bg-brand-cream p-1 rounded-xl border border-[#EBE3D8] flex items-center">
+            <button id="agendaViewBtn" onclick="toggleView('agenda')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-brand-dark shadow-sm">
+              <i class="fa-solid fa-list-ul mr-1"></i> List
+            </button>
+            <button id="calendarViewBtn" onclick="toggleView('calendar')" class="px-3 py-1.5 rounded-lg text-xs font-bold text-brand-muted hover:text-brand-dark">
+              <i class="fa-regular fa-calendar-days mr-1"></i> Calendar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reminders List View Section -->
+      <div id="agendaView" class="space-y-3">
+        <div class="flex items-center justify-between px-1">
+          <h3 class="text-sm font-bold uppercase tracking-wider text-brand-muted">Scheduled Items</h3>
+          <span id="activeFilterBadge" class="text-xs font-semibold bg-brand-terracottaLight text-brand-terracotta px-2.5 py-1 rounded-lg">Showing All</span>
+        </div>
+
+        <!-- Dynamic List Containers -->
+        <div id="remindersContainer" class="space-y-3">
+          <!-- Dynamically populated by JS -->
+        </div>
+      </div>
+
+      <!-- Calendar View (Hidden by Default) -->
+      <div id="calendarView" class="hidden bg-white rounded-2xl border border-[#EDE5DA] p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-extrabold text-brand-dark">October 2026</h3>
+          <div class="flex items-center gap-2">
+            <button class="w-8 h-8 rounded-lg bg-brand-cream flex items-center justify-center text-xs text-brand-dark font-bold hover:bg-[#F2ECE3]"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="px-3 py-1.5 rounded-lg bg-brand-cream text-xs font-bold text-brand-dark">Today</button>
+            <button class="w-8 h-8 rounded-lg bg-brand-cream flex items-center justify-center text-xs text-brand-dark font-bold hover:bg-[#F2ECE3]"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+        </div>
+
+        <!-- Days Header -->
+        <div class="grid grid-cols-7 gap-2 text-center text-xs font-extrabold text-brand-muted mb-2">
+          <div>SUN</div><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div>
+        </div>
+
+        <!-- Calendar Days Grid -->
+        <div id="calendarGrid" class="grid grid-cols-7 gap-2">
+          <!-- Calendar Days dynamically generated -->
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ADD / EDIT REMINDER MODAL -->
+  <div id="reminderModal" class="fixed inset-0 z-50 flex items-center justify-center hidden modal-backdrop p-4">
+    <div class="bg-white rounded-3xl border border-[#EDE5DA] shadow-2xl w-full max-w-lg overflow-hidden transform transition-all">
+      <!-- Modal Header -->
+      <div class="bg-brand-cream p-6 border-b border-[#EDE5DA] flex items-center justify-between">
         <div>
-          <span class="text-[11px] font-bold tracking-wider text-orange-600 uppercase">Vaccination Schedule</span>
-          <h2 class="text-2xl font-black text-stone-900 mt-0.5">Vaccination Records (Buster)</h2>
+          <span class="text-[10px] font-extrabold text-brand-terracotta tracking-wider uppercase">PAWFOLIO PASSPORT</span>
+          <h3 id="modalHeaderTitle" class="text-xl font-extrabold text-brand-dark">Schedule New Reminder</h3>
         </div>
-        <button class="bg-orange-500 hover:bg-orange-600 text-white font-medium text-xs px-4 py-2.5 rounded-full shadow-sm transition">
-          + Add Vaccination Record
+        <button onclick="closeAddModal()" class="w-9 h-9 rounded-full bg-white flex items-center justify-center text-brand-muted hover:text-brand-dark border border-[#E5DDD2] transition-colors">
+          <i class="fa-solid fa-xmark text-sm"></i>
         </button>
       </div>
 
-      <!-- Filter Tabs -->
-      <div class="flex items-center gap-2 mb-6 text-xs font-medium">
-        <button class="bg-orange-500 text-white px-4 py-1.5 rounded-full shadow-sm">All (4)</button>
-        <button class="bg-white text-stone-600 border border-stone-200 px-4 py-1.5 rounded-full hover:bg-stone-50">Completed (2)</button>
-        <button class="bg-white text-stone-600 border border-stone-200 px-4 py-1.5 rounded-full hover:bg-stone-50">Upcoming (1)</button>
-        <button class="bg-white text-stone-600 border border-stone-200 px-4 py-1.5 rounded-full hover:bg-stone-50">Overdue (1)</button>
-      </div>
+      <!-- Modal Body Form -->
+      <form id="reminderForm" onsubmit="handleSaveReminder(event)" class="p-6 space-y-4">
+        <input type="hidden" id="editReminderId" value="">
 
-      <!-- Schedule & Reminder List -->
-      <div class="space-y-3">
-
-        <!-- Item 1: Completed -->
-        <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 flex items-center justify-between">
-          <div class="flex items-center gap-4">
-            <div class="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xs font-bold">✓</div>
-            <div>
-              <h3 class="text-sm font-bold text-stone-900">DHPP Core Vaccine (Distemper / Parvovirus)</h3>
-              <p class="text-xs text-stone-500 mt-0.5">Administered Nov 14, 2023 • Vet: Dr. Mark Wilson</p>
-            </div>
-          </div>
-          <span class="bg-emerald-100 text-emerald-800 text-[11px] font-semibold px-3 py-1 rounded-full">Completed</span>
+        <!-- Title -->
+        <div>
+          <label class="block text-xs font-bold text-brand-dark mb-1">Reminder Title *</label>
+          <input type="text" id="reminderTitle" required placeholder="e.g. Rabies Booster Shot, Heartworm Meds" class="w-full bg-brand-cream border border-[#EDE5DA] rounded-xl px-4 py-2.5 text-xs font-semibold text-brand-dark focus:outline-none focus:border-brand-terracotta">
         </div>
 
-        <!-- Item 2: Completed -->
-        <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 flex items-center justify-between">
-          <div class="flex items-center gap-4">
-            <div class="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xs font-bold">✓</div>
-            <div>
-              <h3 class="text-sm font-bold text-stone-900">Leptospirosis Annual Booster</h3>
-              <p class="text-xs text-stone-500 mt-0.5">Administered May 22, 2023 • Vet: Dr. Sarah Lee</p>
-            </div>
+        <!-- Category & Frequency Grid -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-brand-dark mb-1">Category</label>
+            <select id="reminderCategory" class="w-full bg-brand-cream border border-[#EDE5DA] rounded-xl px-3 py-2.5 text-xs font-semibold text-brand-dark focus:outline-none focus:border-brand-terracotta">
+              <option value="Vaccination">💉 Vaccination</option>
+              <option value="Medication">💊 Medication</option>
+              <option value="Grooming">✂️ Grooming</option>
+              <option value="Vet Visit">🏥 Vet Visit</option>
+            </select>
           </div>
-          <span class="bg-emerald-100 text-emerald-800 text-[11px] font-semibold px-3 py-1 rounded-full">Completed</span>
+
+          <div>
+            <label class="block text-xs font-bold text-brand-dark mb-1">Frequency</label>
+            <select id="reminderFrequency" class="w-full bg-brand-cream border border-[#EDE5DA] rounded-xl px-3 py-2.5 text-xs font-semibold text-brand-dark focus:outline-none focus:border-brand-terracotta">
+              <option value="One-time">One-time</option>
+              <option value="Monthly">Monthly</option>
+              <option value="Every 3 Months">Every 3 Months</option>
+              <option value="Annual">Annual</option>
+            </select>
+          </div>
         </div>
 
-        <!-- Item 3: Upcoming -->
-        <div class="bg-amber-50 border border-amber-100 rounded-2xl p-4 flex items-center justify-between">
-          <div class="flex items-center gap-4">
-            <div class="w-8 h-8 rounded-full bg-amber-400 flex items-center justify-center text-white text-xs font-bold">!</div>
-            <div>
-              <h3 class="text-sm font-bold text-stone-900">Rabies Annual Booster</h3>
-              <p class="text-xs text-stone-500 mt-0.5">Scheduled Dec 12, 2024 • Due in 12 days</p>
-            </div>
+        <!-- Date & Time Grid -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-brand-dark mb-1">Due Date *</label>
+            <input type="date" id="reminderDate" required class="w-full bg-brand-cream border border-[#EDE5DA] rounded-xl px-4 py-2.5 text-xs font-semibold text-brand-dark focus:outline-none focus:border-brand-terracotta">
           </div>
-          <span class="bg-amber-100 text-amber-800 text-[11px] font-semibold px-3 py-1 rounded-full">Upcoming</span>
+
+          <div>
+            <label class="block text-xs font-bold text-brand-dark mb-1">Time</label>
+            <input type="time" id="reminderTime" value="09:00" class="w-full bg-brand-cream border border-[#EDE5DA] rounded-xl px-4 py-2.5 text-xs font-semibold text-brand-dark focus:outline-none focus:border-brand-terracotta">
+          </div>
         </div>
 
-        <!-- Item 4: Overdue -->
-        <div class="bg-rose-50 border border-rose-100 rounded-2xl p-4 flex items-center justify-between">
-          <div class="flex items-center gap-4">
-            <div class="w-8 h-8 rounded-full bg-rose-500 flex items-center justify-center text-white text-xs font-bold">✕</div>
-            <div>
-              <h3 class="text-sm font-bold text-stone-900">Bordetella Kennel Cough</h3>
-              <p class="text-xs text-stone-500 mt-0.5">Was due Sep 10, 2024 • Overdue by 83 days</p>
-            </div>
+        <!-- Priority & Location -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-brand-dark mb-1">Priority</label>
+            <select id="reminderPriority" class="w-full bg-brand-cream border border-[#EDE5DA] rounded-xl px-3 py-2.5 text-xs font-semibold text-brand-dark focus:outline-none focus:border-brand-terracotta">
+              <option value="High">🔴 High Priority</option>
+              <option value="Medium" selected>🟡 Normal Priority</option>
+              <option value="Low">🟢 Low Priority</option>
+            </select>
           </div>
-          <span class="bg-rose-100 text-rose-800 text-[11px] font-semibold px-3 py-1 rounded-full">Overdue</span>
+
+          <div>
+            <label class="block text-xs font-bold text-brand-dark mb-1">Location / Vet</label>
+            <input type="text" id="reminderLocation" placeholder="e.g. Happy Paws Clinic" class="w-full bg-brand-cream border border-[#EDE5DA] rounded-xl px-4 py-2.5 text-xs font-semibold text-brand-dark focus:outline-none focus:border-brand-terracotta">
+          </div>
         </div>
 
-      </div>
-    </main>
+        <!-- Notes -->
+        <div>
+          <label class="block text-xs font-bold text-brand-dark mb-1">Special Instructions / Notes</label>
+          <textarea id="reminderNotes" rows="2" placeholder="e.g. Give with food, bring vaccination booklet" class="w-full bg-brand-cream border border-[#EDE5DA] rounded-xl p-3 text-xs font-semibold text-brand-dark focus:outline-none focus:border-brand-terracotta resize-none"></textarea>
+        </div>
 
+        <!-- Footer Buttons -->
+        <div class="pt-2 flex items-center justify-end gap-3 border-t border-[#EDE5DA]">
+          <button type="button" onclick="closeAddModal()" class="px-5 py-2.5 rounded-xl text-xs font-bold text-brand-muted hover:bg-brand-cream">Cancel</button>
+          <button type="submit" class="bg-brand-terracotta hover:bg-brand-terracottaHover text-white px-6 py-2.5 rounded-xl text-xs font-bold shadow-sm transition-colors">
+            Save Schedule
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 
+  <!-- JAVASCRIPT APP LOGIC -->
+  <script>
+    // Initial Reminders Data
+    let remindersData = [
+      {
+        id: '1',
+        dog: 'Buster',
+        title: 'Rabies Booster Vaccine',
+        category: 'Vaccination',
+        dueDate: '2026-10-08',
+        time: '10:30 AM',
+        frequency: 'Annual',
+        priority: 'High',
+        location: 'Central Vet Hospital',
+        notes: 'Annual mandatory rabies shot required for county registration.',
+        completed: false
+      },
+      {
+        id: '2',
+        dog: 'Buster',
+        title: 'Monthly Heartworm & Flea Chewable',
+        category: 'Medication',
+        dueDate: '2026-10-10',
+        time: '08:00 AM',
+        frequency: 'Monthly',
+        priority: 'High',
+        location: 'Home',
+        notes: 'Administer 1 tablet during breakfast.',
+        completed: false
+      },
+      {
+        id: '3',
+        dog: 'Buster',
+        title: 'Full Body Coat Grooming & Bath',
+        category: 'Grooming',
+        dueDate: '2026-10-15',
+        time: '02:00 PM',
+        frequency: 'Monthly',
+        priority: 'Medium',
+        location: 'Paws & Bubbles Spa',
+        notes: 'Nail trim, ear cleaning, and undercoat de-shedding.',
+        completed: false
+      },
+      {
+        id: '4',
+        dog: 'Buster',
+        title: 'Biannual Dental Checkup & Scaling',
+        category: 'Vet Visit',
+        dueDate: '2026-10-22',
+        time: '11:00 AM',
+        frequency: 'Every 6 Months',
+        priority: 'Medium',
+        location: 'Dr. Smith Canine Dental',
+        notes: 'Fast 8 hours prior to appointment.',
+        completed: false
+      },
+      {
+        id: '5',
+        dog: 'Buster',
+        title: 'Deworming Tablet',
+        category: 'Medication',
+        dueDate: '2026-10-02',
+        time: '09:00 AM',
+        frequency: 'Quarterly',
+        priority: 'Low',
+        location: 'Home',
+        notes: 'Completed earlier this month.',
+        completed: true
+      },
+      {
+        id: '6',
+        dog: 'Buster',
+        title: 'DHPP Combination Vaccine',
+        category: 'Vaccination',
+        dueDate: '2026-11-05',
+        time: '09:30 AM',
+        frequency: 'Annual',
+        priority: 'Medium',
+        location: 'Central Vet Hospital',
+        notes: 'Distemper, Hepatitis, Parvovirus, Parainfluenza.',
+        completed: false
+      }
+    ];
+
+    let currentCategoryFilter = 'All';
+    let currentActiveDog = 'Buster';
+
+    // Initialize App on Load
+    window.addEventListener('DOMContentLoaded', () => {
+      renderReminders();
+      renderCalendar();
+    });
+
+    // Switch active dog profile
+    function switchDogProfile(dogName) {
+      currentActiveDog = dogName;
+      document.getElementById('activeDogName').innerText = dogName;
+      document.getElementById('pageTitle').innerText = `Schedules & Reminder (${dogName})`;
+      renderReminders();
+    }
+
+    // Navigation item switcher
+    function setActiveNav(navName) {
+      const items = document.querySelectorAll('.nav-item');
+      items.forEach(item => {
+        item.classList.remove('active', 'bg-brand-terracottaLight', 'text-brand-terracotta', 'font-bold');
+        item.classList.add('text-brand-muted', 'font-semibold');
+      });
+
+      event.currentTarget.classList.add('active', 'bg-brand-terracottaLight', 'text-brand-terracotta', 'font-bold');
+      event.currentTarget.classList.remove('text-brand-muted');
+    }
+
+    // Category Filter Switcher
+    function filterCategory(category) {
+      currentCategoryFilter = category;
+      document.querySelectorAll('.filter-tab').forEach(btn => {
+        btn.classList.remove('bg-brand-terracotta', 'text-white');
+        btn.classList.add('text-brand-muted');
+      });
+      event.currentTarget.classList.add('bg-brand-terracotta', 'text-white');
+      event.currentTarget.classList.remove('text-brand-muted');
+
+      document.getElementById('activeFilterBadge').innerText = `Category: ${category}`;
+      renderReminders();
+    }
+
+    // Toggle View (Agenda List vs Calendar)
+    function toggleView(viewType) {
+      const agendaView = document.getElementById('agendaView');
+      const calendarView = document.getElementById('calendarView');
+      const agendaBtn = document.getElementById('agendaViewBtn');
+      const calendarBtn = document.getElementById('calendarViewBtn');
+
+      if (viewType === 'agenda') {
+        agendaView.classList.remove('hidden');
+        calendarView.classList.add('hidden');
+        agendaBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-brand-dark shadow-sm";
+        calendarBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold text-brand-muted hover:text-brand-dark";
+      } else {
+        agendaView.classList.add('hidden');
+        calendarView.classList.remove('hidden');
+        calendarBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-brand-dark shadow-sm";
+        agendaBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold text-brand-muted hover:text-brand-dark";
+      }
+    }
+
+    // Render Reminders List Card Items
+    function renderReminders() {
+      const container = document.getElementById('remindersContainer');
+      const searchVal = document.getElementById('searchInput').value.toLowerCase();
+
+      let filtered = remindersData.filter(item => {
+        const matchesDog = item.dog === currentActiveDog;
+        const matchesCat = currentCategoryFilter === 'All' || item.category === currentCategoryFilter;
+        const matchesSearch = item.title.toLowerCase().includes(searchVal) || item.notes.toLowerCase().includes(searchVal);
+        return matchesDog && matchesCat && matchesSearch;
+      });
+
+      // Update Quick Stats Numbers
+      const totalCount = filtered.length;
+      const completedCount = filtered.filter(i => i.completed).length;
+      const dueSoonCount = filtered.filter(i => !i.completed).length;
+
+      document.getElementById('statTotal').innerText = totalCount;
+      document.getElementById('statCompleted').innerText = completedCount;
+      document.getElementById('statDueSoon').innerText = dueSoonCount;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="bg-white rounded-2xl p-10 text-center border border-[#EDE5DA]">
+            <i class="fa-solid fa-calendar-xmark text-4xl text-brand-terracotta/40 mb-3"></i>
+            <h4 class="font-bold text-brand-dark">No scheduled reminders found</h4>
+            <p class="text-xs text-brand-muted mt-1">Try resetting filters or click "+ Add Reminder" to schedule a new task.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(item => {
+        const isCompleted = item.completed;
+        const iconClass = getCategoryIcon(item.category);
+        const priorityBadge = getPriorityBadge(item.priority);
+
+        return `
+          <div class="bg-white rounded-2xl p-5 border border-[#EDE5DA] shadow-sm hover:shadow transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 ${isCompleted ? 'opacity-65 bg-gray-50/50' : ''}">
+            <!-- Left Info Block -->
+            <div class="flex items-start gap-4">
+              <button onclick="toggleComplete('${item.id}')" class="mt-1 w-6 h-6 rounded-lg border-2 ${isCompleted ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-gray-300 hover:border-brand-terracotta'} flex items-center justify-center transition-colors">
+                ${isCompleted ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
+              </button>
+
+              <div class="space-y-1">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="text-xs font-extrabold px-2.5 py-0.5 rounded-md ${getCategoryBadgeStyle(item.category)}">${item.category}</span>
+                  ${priorityBadge}
+                  <span class="text-xs font-semibold text-brand-muted"><i class="fa-regular fa-repeat text-[10px] mr-1"></i>${item.frequency}</span>
+                </div>
+
+                <h4 class="text-base font-extrabold text-brand-dark ${isCompleted ? 'line-through text-gray-400' : ''}">${item.title}</h4>
+
+                <p class="text-xs text-brand-muted font-medium flex items-center gap-3 flex-wrap">
+                  <span><i class="fa-regular fa-calendar text-brand-terracotta mr-1"></i><strong>${formatDate(item.dueDate)}</strong> at ${item.time}</span>
+                  ${item.location ? `<span><i class="fa-solid fa-location-dot text-brand-terracotta mr-1"></i>${item.location}</span>` : ''}
+                </p>
+
+                ${item.notes ? `<p class="text-xs text-gray-500 bg-brand-cream/80 px-3 py-1.5 rounded-lg border border-[#EDE5DA] mt-2 inline-block">${item.notes}</p>` : ''}
+              </div>
+            </div>
+
+            <!-- Right Controls -->
+            <div class="flex items-center gap-2 self-end md:self-center border-t md:border-t-0 pt-3 md:pt-0 border-gray-100 w-full md:w-auto justify-end">
+              <button onclick="editReminder('${item.id}')" title="Edit Schedule" class="w-9 h-9 rounded-xl bg-brand-cream hover:bg-[#F0EADF] text-brand-dark flex items-center justify-center text-xs transition-colors">
+                <i class="fa-solid fa-pen"></i>
+              </button>
+              <button onclick="deleteReminder('${item.id}')" title="Delete Schedule" class="w-9 h-9 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 flex items-center justify-center text-xs transition-colors">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Utility Badge Helpers
+    function getCategoryIcon(cat) {
+      switch (cat) {
+        case 'Vaccination': return 'fa-syringe';
+        case 'Medication': return 'fa-pills';
+        case 'Grooming': return 'fa-scissors';
+        default: return 'fa-stethoscope';
+      }
+    }
+
+    function getCategoryBadgeStyle(cat) {
+      switch (cat) {
+        case 'Vaccination': return 'bg-orange-100 text-orange-800';
+        case 'Medication': return 'bg-blue-100 text-blue-800';
+        case 'Grooming': return 'bg-purple-100 text-purple-800';
+        default: return 'bg-emerald-100 text-emerald-800';
+      }
+    }
+
+    function getPriorityBadge(priority) {
+      if (priority === 'High') return `<span class="text-[10px] font-bold bg-red-100 text-red-700 px-2 py-0.5 rounded-md">High Priority</span>`;
+      if (priority === 'Medium') return `<span class="text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-md">Normal Priority</span>`;
+      return `<span class="text-[10px] font-bold bg-gray-100 text-gray-600 px-2 py-0.5 rounded-md">Low Priority</span>`;
+    }
+
+    function formatDate(dateStr) {
+      const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      return new Date(dateStr).toLocaleDateString('en-US', options);
+    }
+
+    // Check complete status toggle
+    function toggleComplete(id) {
+      remindersData = remindersData.map(item => {
+        if (item.id === id) return { ...item, completed: !item.completed };
+        return item;
+      });
+      renderReminders();
+    }
+
+    // Delete schedule item
+    function deleteReminder(id) {
+      remindersData = remindersData.filter(item => item.id !== id);
+      renderReminders();
+    }
+
+    // Open Add Modal
+    function openAddModal() {
+      document.getElementById('modalHeaderTitle').innerText = 'Schedule New Reminder';
+      document.getElementById('editReminderId').value = '';
+      document.getElementById('reminderForm').reset();
+      document.getElementById('reminderModal').classList.remove('hidden');
+    }
+
+    // Close Modal
+    function closeAddModal() {
+      document.getElementById('reminderModal').classList.add('hidden');
+    }
+
+    // Edit Existing Reminder
+    function editReminder(id) {
+      const item = remindersData.find(r => r.id === id);
+      if (!item) return;
+
+      document.getElementById('modalHeaderTitle').innerText = 'Edit Schedule Item';
+      document.getElementById('editReminderId').value = item.id;
+      document.getElementById('reminderTitle').value = item.title;
+      document.getElementById('reminderCategory').value = item.category;
+      document.getElementById('reminderFrequency').value = item.frequency;
+      document.getElementById('reminderDate').value = item.dueDate;
+      document.getElementById('reminderTime').value = item.time;
+      document.getElementById('reminderPriority').value = item.priority;
+      document.getElementById('reminderLocation').value = item.location || '';
+      document.getElementById('reminderNotes').value = item.notes || '';
+
+      document.getElementById('reminderModal').classList.remove('hidden');
+    }
+
+    // Save Form Handler
+    function handleSaveReminder(event) {
+      event.preventDefault();
+
+      const editId = document.getElementById('editReminderId').value;
+      const newSchedule = {
+        id: editId || Date.now().toString(),
+        dog: currentActiveDog,
+        title: document.getElementById('reminderTitle').value,
+        category: document.getElementById('reminderCategory').value,
+        frequency: document.getElementById('reminderFrequency').value,
+        dueDate: document.getElementById('reminderDate').value,
+        time: document.getElementById('reminderTime').value || '09:00 AM',
+        priority: document.getElementById('reminderPriority').value,
+        location: document.getElementById('reminderLocation').value,
+        notes: document.getElementById('reminderNotes').value,
+        completed: false
+      };
+
+      if (editId) {
+        remindersData = remindersData.map(r => r.id === editId ? newSchedule : r);
+      } else {
+        remindersData.unshift(newSchedule);
+      }
+
+      closeAddModal();
+      renderReminders();
+    }
+
+    // Simple Render Calendar View Grid
+    function renderCalendar() {
+      const calendarGrid = document.getElementById('calendarGrid');
+      let daysHtml = '';
+
+      // Blank prefix cells
+      for (let i = 0; i < 4; i++) {
+        daysHtml += `<div class="h-24 bg-brand-cream/40 rounded-xl p-2 opacity-30"></div>`;
+      }
+
+      // October Days (1-31)
+      for (let day = 1; day <= 31; day++) {
+        const dateString = `2026-10-${day < 10 ? '0' + day : day}`;
+        const hasEvents = remindersData.filter(r => r.dueDate === dateString && r.dog === currentActiveDog);
+
+        daysHtml += `
+          <div class="h-24 bg-brand-cream/60 rounded-xl p-2 border border-[#EDE5DA] flex flex-col justify-between hover:bg-white transition-colors cursor-pointer">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-black ${day === 4 ? 'bg-brand-terracotta text-white w-5 h-5 rounded-full flex items-center justify-center' : 'text-brand-dark'}">${day}</span>
+              ${hasEvents.length > 0 ? `<span class="w-2 h-2 rounded-full bg-brand-terracotta"></span>` : ''}
+            </div>
+
+            <div class="space-y-1">
+              ${hasEvents.map(e => `
+                <div class="text-[9px] font-extrabold truncate px-1.5 py-0.5 rounded bg-brand-terracottaLight text-brand-terracotta">
+                  ${e.title}
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      calendarGrid.innerHTML = daysHtml;
+    }
+  </script>
 </body>
 </html>
